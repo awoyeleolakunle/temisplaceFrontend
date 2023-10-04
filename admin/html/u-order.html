@@ -188,13 +188,13 @@
                                             </div>
                                             <div class="flex-fill">
                                                 <span class="fw-semibold text-muted d-block mb-2">Revenue</span>
-                                                <h5 class="fw-semibold mb-2">£2,124.00</h5>
+                                                <h5 id="revenueId" class="fw-semibold mb-2">£2,124.00</h5>
                                                 <p class="mb-0">
                                                     <span class="badge bg-primary-transparent">Today</span>
                                                 </p>
                                             </div>
                                             <div>
-                                                <span class="fs-14 fw-semibold text-success">+1.03%</span>
+                                                <span id="revenue%Id" class="fs-14 fw-semibold text-success">+1.03%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -211,13 +211,13 @@
                                             </div>
                                             <div class="flex-fill">
                                                 <span class="fw-semibold text-muted d-block mb-2">Active Order</span>
-                                                <h5 class="fw-semibold mb-2">8</h5>
+                                                <h5 id="numberOfActiveOrderId" class="fw-semibold mb-2">8</h5>
                                                 <p class="mb-0">
                                                     <span class="badge bg-secondary-transparent">Today</span>
                                                 </p>
                                             </div>
                                             <div>
-                                                <span class="fs-14 fw-semibold text-success">+0.36%</span>
+                                                <span id="activeOrders%Id" class="fs-14 fw-semibold text-success">+0.36%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -234,13 +234,13 @@
                                             </div>
                                             <div class="flex-fill">
                                                 <span class="fw-semibold text-muted d-block mb-2">Completed Order</span>
-                                                <h5 class="fw-semibold mb-2">349</h5>
+                                                <h5 id="completedOrdersId" class="fw-semibold mb-2">349</h5>
                                                 <p class="mb-0">
                                                     <span class="badge bg-success-transparent">Today</span>
                                                 </p>
                                             </div>
                                             <div>
-                                                <span class="fs-14 fw-semibold text-danger">-1.28%</span>
+                                                <span id="completedOrders%Id" class="fs-14 fw-semibold text-danger">-1.28%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -257,13 +257,13 @@
                                             </div>
                                             <div class="flex-fill">
                                                 <span class="fw-semibold text-muted d-block mb-2">Cancelled Order</span>
-                                                <h5 class="fw-semibold mb-2">3</h5>
+                                                <h5 id="cancelledOrdersId" class="fw-semibold mb-2">3</h5>
                                                 <p class="mb-0">
                                                     <span class="badge bg-danger-transparent">Today</span>
                                                 </p>
                                             </div>
                                             <div>
-                                                <span class="fs-14 fw-semibold text-success">+4.25%</span>
+                                                <span  id="cancelledOrders%Id" class="fs-14 fw-semibold text-success">+4.25%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1159,6 +1159,7 @@
 
     <!-- Custom JS -->
     <script src="../assets/js/custom.js"></script>
+    <script src="integration/u-order.js"></script>
 
 </body>
 
