@@ -68,6 +68,7 @@ addToCartButton.addEventListener('click', () => {
 
 
 
+let sizeOfItemCategory = 0;
 
 function fetcAllItemCategoryName(){
 
@@ -87,7 +88,7 @@ function fetcAllItemCategoryName(){
         }
     })
     .then(data=>{
-        console.log("i'm the orderStatus info ", data);
+        console.log("i'm the list of item category ", data);
         displayCategoryName(data)
     })
     .catch(error=>{
@@ -100,8 +101,12 @@ function fetcAllItemCategoryName(){
 
 function displayCategoryName(data){
 
+    sizeOfItemCategory = data.length;
+
 
     const mainContainer = document.getElementById("itemCategoryNameListId");
+
+
 
     mainContainer.innerHTML="";
 
@@ -149,6 +154,7 @@ listItem.addEventListener('click', ()=>{
     };
 
     console.log("I'm the itemCategory", unitAvailableItemsRequest.itemCategory);
+   
     fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest)
 })
 
@@ -161,8 +167,171 @@ listItem.addEventListener('click', ()=>{
 
 
 function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
-    console.log("I'm running the function ");
+        
+    fetch('http://localhost:8080/api/v1/temisplace/AUnitAllItemsUnderItemCategory', {
+        method :'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify(unitAvailableItemsRequest)
+    })
+    .then(response=>{
+        if(!response.ok){
+            throw new Error('Failed to load')
+        }
+        else{
+            return response.json()
+        }
+    })
+    .then(data=>{
+        console.log("i'm the list of item under item category ", data);
+        displayAllAvailableItemsUnderAnItemCategory(data)
+    })
+    .catch(error=>{
+        console.log("error : ", error);
+    })
+
 }
+
+
+
+
+function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
+    
+    clearInitialItemsFectehedUnderItemCategory()
+
+    
+    const mainContainer = document.getElementById("itemCategoryNameListId");
+
+  
+    listOfItemsUnderItemCategory.forEach((item, index) => {
+        const modalId = `myModal${index}`;
+       // const itemsId = `itemsId${index}`;
+    
+        const itemContainer = document.createElement('div')
+        itemContainer.className = "col-xxl-2 col-lg-4 col-md-4";
+
+        itemContainer.innerHTML = `
+            <!-- Item Card Content -->
+            <div id="itemsId" class="card custom-card overflow-hidden">
+                <div class="card-body">
+                    <div class="d-flex align-items-top justify-content-between   product-link">
+                        <div><a href="javascript:void(0);">
+                            <span class="avatar avatar-md avatar-rounded bg-blue">
+                            </span></a>
+                        </div>
+                        <div class="flex-fill ms-3">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                <div>
+                                    <p class="text-muted mb-0">${item.price} </p>
+                                    <a href="javascript:void(0);" class="product-name">
+                                        <h4 class="fw-semibold mt-1">${item.itemId}</h4>
+                                    </a>
+                                </div>
+                                <div id="crm-total-customers"></div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-1">
+                                <div class="text-end">
+                                    <p class="mb-0 text-blue fw-semibold product-description">${item.itemTitle}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pop-up/modal -->
+            <div id=${ modalId} class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <!-- Content of the pop-up/modal -->
+                    <h2>Available Sizes and Prices</h2>
+                    <ul id="sizeAndPriceList">
+                        <!-- Populate this list with the sizes and prices dynamically -->
+                    </ul>
+                    <button id="addToCartButton">Add to Cart</button>
+                </div>
+            </div>
+            `;
+
+
+        mainContainer.appendChild(itemContainer); 
+
+        itemContainer.querySelector('.product-link').addEventListener('click', () => {
+            openModal(item, modalId);
+        });
+
+        // Add click event listener to open the modal
+        // listItem.addEventListener('click', () => {
+        //     openModal(modalId);
+        // });
+    });
+
+    console.log("I'm the function");
+}
+
+
+
+
+
+function clearInitialItemsFectehedUnderItemCategory(){
+    const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4')
+
+    if (elements.length > 0) {
+        elements.forEach(element => {
+            if((element.querySelector('#itemsId'))){
+            element.innerHTML ="";}
+        });
+    } else {
+        console.log('No matching elements found.');
+    }
+}
+
+
+
+function openModal(item, modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'block';
+
+    const sizeAndPriceList = modal.querySelector('#sizeAndPriceList');
+    const addToCartButton = modal.querySelector('#addToCartButton');
+
+    sizeAndPriceList.innerHTML = "";
+
+    for (const sizesAndPrices of item.itemPriceAndSize) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <input type="checkbox" class="check-button" />
+            <input type="text" class="item-quantity" placeholder="enter quantity"/>
+            ${sizesAndPrices.size} - £${sizesAndPrices.price}
+        `;
+        sizeAndPriceList.appendChild(listItem);
+    }
+
+    modal.querySelector('.close').addEventListener('click', () => {
+        closeModal(modal); // Pass the modal as a parameter
+    });
+}
+
+function closeModal(modal) {
+    modal.style.display = 'none';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
