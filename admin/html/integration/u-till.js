@@ -5,6 +5,7 @@
 document.addEventListener('DOMContentLoaded', fetcAllItemCategoryName)
 
 const unitName = 'LONDON'
+let listOfItemDetails = [];
 
 //document.getElementById('itemCategoryNameListId').innerHTML="";
 
@@ -12,12 +13,12 @@ const unitName = 'LONDON'
 // Your existing JavaScript code here
 
 // Get the trigger div and the modal
-const triggerDiv =document.querySelector('.product-link'); // Changed to select the product link
+//const triggerDiv =document.querySelector('.product-link'); // Changed to select the product link
 
 //document.querySelector('.mainItemDiv')
 //document.querySelector('.product-link'); // Changed to select the product link
 
-const modal = document.getElementById('myModal');
+//const modal = document.getElementById('myModal');
 
 // Get the modal content elements
 const sizeAndPriceList = document.getElementById('sizeAndPriceList');
@@ -30,32 +31,32 @@ const productData = [
 ];
 
 // Function to open the modal and populate it with data
-function openModal() {
-    sizeAndPriceList.innerHTML = ''; // Clear previous data
+//function openModal() {
+  //  sizeAndPriceList.innerHTML = ''; // Clear previous data
 
-    for (const item of productData) {
-        const listItem = document.createElement('li');
-        listItem.innerHTML =  listItem.innerHTML = `
-        <input type="checkbox" class="check-button" />
-        <input type="text" class="item-quantity" placeholder="enter quantity"/>
-        ${item.size} - ${item.price}
-    `;
-        sizeAndPriceList.appendChild(listItem);
-    }
+    // for (const item of productData) {
+    //     const listItem = document.createElement('li');
+    //     listItem.innerHTML =  listItem.innerHTML = `
+    //     <input type="checkbox" class="check-button" />
+    //     <input type="text" class="item-quantity" placeholder="enter quantity"/>
+    //     ${item.size} - ${item.price}
+    // `;
+    //     sizeAndPriceList.appendChild(listItem);
+    // }
 
-    modal.style.display = 'block';
-}
+    // modal.style.display = 'block';
+//}
 
 // Function to close the modal
-function closeModal() {
-    modal.style.display = 'none';
-}
+// function closeModal() {
+//     modal.style.display = 'none';
+// }
 
 // Attach click event listener to the product link
-triggerDiv.addEventListener('click', openModal);
+//triggerDiv.addEventListener('click', openModal);
 
 // Attach click event listener to the close button (X)
-document.querySelector('.close').addEventListener('click', closeModal);
+//document.querySelector('.close').addEventListener('click', closeModal);
 
 // Attach click event listener to the "Add to Cart" button (you can implement cart functionality here)
 addToCartButton.addEventListener('click', () => {
@@ -196,26 +197,73 @@ function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
 
 
 
-function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
-    
-    clearInitialItemsFectehedUnderItemCategory()
 
-    
+// Initialize your listOfItemDetails array
+//let listOfItemDetails = [];
+
+function generateSizesAndPricesItem(sizesAndPrices, itemId) {
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `
+        <input type="checkbox" class="check-button" />
+        <input type="text" class="item-quantity" placeholder="enter quantity"/>
+        ${sizesAndPrices.size} - £${sizesAndPrices.price}
+    `;
+
+    const checkbox = listItem.querySelector('.check-button');
+    const quantityInput = listItem.querySelector('.item-quantity');
+
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            // Checkbox is checked, add item details
+            let itemQuantity = quantityInput.value || 0; // Get quantity or default to 0
+            let subTotal = itemQuantity * sizesAndPrices.price;
+            let itemDetails = {
+                itemQuantity: itemQuantity,
+                subTotal: subTotal,
+                itemId: itemId,
+                itemSize: sizesAndPrices.size
+            };
+            addItemDetailsToList(itemDetails);
+        } else {
+            // Checkbox is unchecked, remove item details
+            removeItemDetailsFromList(itemId, sizesAndPrices.size);
+        }
+    });
+
+    // Add event listener for quantity input change
+    quantityInput.addEventListener('input', () => {
+        if (checkbox.checked) {
+            // Checkbox is checked, update item details with new quantity
+            let itemQuantity = quantityInput.value || 0;
+            let subTotal = itemQuantity * sizesAndPrices.price;
+            let updatedItemDetails = {
+                itemQuantity: itemQuantity,
+                subTotal: subTotal,
+                itemId: itemId,
+                itemSize: sizesAndPrices.size
+            };
+
+            updateItemDetailsInList(updatedItemDetails);
+        }
+    });
+
+    return listItem;
+}
+
+function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
+    clearInitialItemsFectehedUnderItemCategory();
     const mainContainer = document.getElementById("itemCategoryNameListId");
 
-  
     listOfItemsUnderItemCategory.forEach((item, index) => {
         const modalId = `myModal${index}`;
-       // const itemsId = `itemsId${index}`;
-    
-        const itemContainer = document.createElement('div')
-        itemContainer.className = "col-xxl-2 col-lg-4 col-md-4";
+        const itemContainer = document.createElement('div');
+        itemContainer.className = "col-xxl-2 col-lg-4 col-md-4 item-container";
 
         itemContainer.innerHTML = `
             <!-- Item Card Content -->
-            <div id="itemsId" class="card custom-card overflow-hidden">
+            <div class="card custom-card overflow-hidden">
                 <div class="card-body">
-                    <div class="d-flex align-items-top justify-content-between   product-link">
+                    <div class="d-flex align-items-top justify-content-between product-link">
                         <div><a href="javascript:void(0);">
                             <span class="avatar avatar-md avatar-rounded bg-blue">
                             </span></a>
@@ -241,7 +289,7 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
             </div>
 
             <!-- Pop-up/modal -->
-            <div id=${ modalId} class="modal">
+            <div id=${modalId} class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <!-- Content of the pop-up/modal -->
@@ -252,61 +300,45 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
                     <button id="addToCartButton">Add to Cart</button>
                 </div>
             </div>
-            `;
+        `;
 
-
-        mainContainer.appendChild(itemContainer); 
+        mainContainer.appendChild(itemContainer);
 
         itemContainer.querySelector('.product-link').addEventListener('click', () => {
-            openModal(item, modalId);
+            openModal(modalId);
         });
 
-        // Add click event listener to open the modal
-        // listItem.addEventListener('click', () => {
-        //     openModal(modalId);
-        // });
+        const sizeAndPriceList = itemContainer.querySelector('#sizeAndPriceList');
+        for (const sizesAndPrices of item.itemPriceAndSize) {
+            const listItem = generateSizesAndPricesItem(sizesAndPrices, item.itemId);
+            sizeAndPriceList.appendChild(listItem);
+        }
     });
-
-    console.log("I'm the function");
 }
 
+function clearInitialItemsFectehedUnderItemCategory() {
 
+   // const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4');
+   // item-container
 
-
-
-function clearInitialItemsFectehedUnderItemCategory(){
-    const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4')
-
+    const elements = document.querySelectorAll('.item-container');
     if (elements.length > 0) {
+        
         elements.forEach(element => {
-            if((element.querySelector('#itemsId'))){
-            element.innerHTML ="";}
+
+           // if (element.querySelector('#itemsId')) 
+                element.innerHTML = "";
+                console.log("cleared element ", element);
+            
         });
     } else {
         console.log('No matching elements found.');
     }
 }
 
-
-
-function openModal(item, modalId) {
+function openModal( modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'block';
-
-    const sizeAndPriceList = modal.querySelector('#sizeAndPriceList');
-    const addToCartButton = modal.querySelector('#addToCartButton');
-
-    sizeAndPriceList.innerHTML = "";
-
-    for (const sizesAndPrices of item.itemPriceAndSize) {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <input type="checkbox" class="check-button" />
-            <input type="text" class="item-quantity" placeholder="enter quantity"/>
-            ${sizesAndPrices.size} - £${sizesAndPrices.price}
-        `;
-        sizeAndPriceList.appendChild(listItem);
-    }
 
     modal.querySelector('.close').addEventListener('click', () => {
         closeModal(modal); // Pass the modal as a parameter
@@ -316,6 +348,240 @@ function openModal(item, modalId) {
 function closeModal(modal) {
     modal.style.display = 'none';
 }
+
+function addItemDetailsToList(itemDetails) {
+    listOfItemDetails.push(itemDetails);
+    console.log(listOfItemDetails);
+}
+
+function updateItemDetailsInList(updatedItemDetails) {
+    for (const item of listOfItemDetails) {
+        if (item.itemId === updatedItemDetails.itemId &&
+            item.itemSize === updatedItemDetails.itemSize) {
+            Object.assign(item, updatedItemDetails);
+            break;
+        }
+    }
+
+    console.log(listOfItemDetails);
+}
+
+function removeItemDetailsFromList(itemId, itemSize) {
+    listOfItemDetails = listOfItemDetails.filter(item => item.itemId !== itemId || item.itemSize !== itemSize);
+    console.log(listOfItemDetails);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
+    
+//     clearInitialItemsFectehedUnderItemCategory()
+
+    
+//     const mainContainer = document.getElementById("itemCategoryNameListId");
+
+  
+//     listOfItemsUnderItemCategory.forEach((item, index) => {
+//         const modalId = `myModal${index}`;
+//        // const itemsId = `itemsId${index}`;
+    
+//         const itemContainer = document.createElement('div')
+//         itemContainer.className = "col-xxl-2 col-lg-4 col-md-4";
+
+//         itemContainer.innerHTML = `
+//             <!-- Item Card Content -->
+//             <div id="itemsId" class="card custom-card overflow-hidden">
+//                 <div class="card-body">
+//                     <div class="d-flex align-items-top justify-content-between   product-link">
+//                         <div><a href="javascript:void(0);">
+//                             <span class="avatar avatar-md avatar-rounded bg-blue">
+//                             </span></a>
+//                         </div>
+//                         <div class="flex-fill ms-3">
+//                             <div class="d-flex align-items-center justify-content-between flex-wrap">
+//                                 <div>
+//                                     <p class="text-muted mb-0">${item.price} </p>
+//                                     <a href="javascript:void(0);" class="product-name">
+//                                         <h4 class="fw-semibold mt-1">${item.itemId}</h4>
+//                                     </a>
+//                                 </div>
+//                                 <div id="crm-total-customers"></div>
+//                             </div>
+//                             <div class="d-flex align-items-center justify-content-between mt-1">
+//                                 <div class="text-end">
+//                                     <p class="mb-0 text-blue fw-semibold product-description">${item.itemTitle}</p>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+
+//             <!-- Pop-up/modal -->
+//             <div id=${ modalId} class="modal">
+//                 <div class="modal-content">
+//                     <span class="close">&times;</span>
+//                     <!-- Content of the pop-up/modal -->
+//                     <h2>Available Sizes and Prices</h2>
+//                     <ul id="sizeAndPriceList">
+//                         <!-- Populate this list with the sizes and prices dynamically -->
+//                     </ul>
+//                     <button id="addToCartButton">Add to Cart</button>
+//                 </div>
+//             </div>
+//             `;
+
+
+//         mainContainer.appendChild(itemContainer); 
+
+//         itemContainer.querySelector('.product-link').addEventListener('click', () => {
+//             openModal(item, modalId);
+//         });
+
+//         // Add click event listener to open the modal
+//         // listItem.addEventListener('click', () => {
+//         //     openModal(modalId);
+//         // });
+//     });
+
+//     console.log("I'm the function");
+// }
+
+
+
+
+
+// function clearInitialItemsFectehedUnderItemCategory(){
+//     const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4')
+
+//     if (elements.length > 0) {
+//         elements.forEach(element => {
+//             if((element.querySelector('#itemsId'))){
+//             element.innerHTML ="";}
+//         });
+//     } else {
+//         console.log('No matching elements found.');
+//     }
+// }
+
+
+
+// function openModal(item, modalId) {
+//     const modal = document.getElementById(modalId);
+//     modal.style.display = 'block';
+
+//     const sizeAndPriceList = modal.querySelector('#sizeAndPriceList');
+//     const addToCartButton = modal.querySelector('#addToCartButton');
+
+//     sizeAndPriceList.innerHTML = "";
+
+//     for (const sizesAndPrices of item.itemPriceAndSize) {
+//         const listItem = document.createElement('li');
+//         listItem.innerHTML = `
+//             <input type="checkbox" class="check-button" />
+//             <input type="text" class="item-quantity" placeholder="enter quantity"/>
+//             ${sizesAndPrices.size} - £${sizesAndPrices.price}
+//         `;
+//         sizeAndPriceList.appendChild(listItem);
+
+    
+//         const checkbox = listItem.querySelector('.check-button');
+//         const quantityInput = listItem.querySelector('.item-quantity');
+
+//         checkbox.addEventListener('change', () => {
+//             if (checkbox.checked) {
+//                 // Checkbox is checked, add item details
+//                 let itemQuantity = quantityInput.value || 0; // Get quantity or default to 0
+//                 let subTotal = itemQuantity * sizesAndPrices.price;
+//                 let itemId = item.itemId;
+//                 let itemDetails = {
+//                     itemQuantity: itemQuantity,
+//                     subTotal: subTotal,
+//                     itemId: itemId,
+//                     itemSize: sizesAndPrices.size
+
+//                 };
+//                 addItemDetailsToList(itemDetails);
+//             } else {
+//                 // Checkbox is unchecked, remove item details
+//                 removeItemDetailsFromList(item.itemId);
+//             }
+//         });
+        
+//         // Add event listener for quantity input change
+//         quantityInput.addEventListener('input', () => {
+//             if (checkbox.checked) {
+//                 // Checkbox is checked, update item details with new quantity
+//                 let itemQuantity = quantityInput.value || 0;
+//                 let subTotal = itemQuantity * sizesAndPrices.price;
+//                 let itemId = item.itemId;
+//                 let updatedItemDetails = {
+//                     itemQuantity: itemQuantity,
+//                     subTotal: subTotal,
+//                     itemId: itemId,
+//                     itemSize: sizesAndPrices.size
+//                 };
+
+//                 updateItemDetailsInList(updatedItemDetails);
+//             }
+//         });
+           
+        
+
+          
+
+//     }
+
+  
+//     modal.querySelector('.close').addEventListener('click', () => {
+//         closeModal(modal); // Pass the modal as a parameter
+//     });
+// }
+
+// function closeModal(modal) {
+//     modal.style.display = 'none';
+// }
+
+
+
+// function addItemDetailsToList(itemDetails){
+//     listOfItemDetails.push(itemDetails)
+//     console.log(listOfItemDetails);
+// }
+
+
+
+// function updateItemDetailsInList(updatedItemDetails){
+
+//     for( const item of listOfItemDetails){
+//         if(item.itemId===updatedItemDetails.itemId
+//              && 
+//         item.sizesAndPrices===updatedItemDetails.sizesAndPrices){
+
+//             Object.assign(item, updatedItemDetails);
+//             break;
+//         }
+//     }
+
+//     console.log(listOfItemDetails);
+// }
+
+// function removeItemDetailsFromList(itemId){
+
+//     listOfItemDetails = listOfItemDetails.filter(item=> item.itemId!= itemId)
+// }
 
 
 
