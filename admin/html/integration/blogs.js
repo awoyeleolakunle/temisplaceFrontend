@@ -75,6 +75,28 @@ paidRadioButton.addEventListener('change', () => {
 
 
 
+
+document.getElementById("postImageUrlId").addEventListener("click", function(){
+
+  cloudinary.createUploadWidget({
+      cloudName: 'deokatly1', 
+      uploadPreset: 'temisplace'}, (error, result) => { 
+        if (!error && result && result.event === "success") { 
+          console.log('Done! Here is the image info: ', result.info); 
+          postImageUrl = result.info.url
+          console.log(postImageUrl);
+
+        //  document.getElementById("imageId").value = result.info.original_filename;
+         
+        }        
+      }
+    ).open()
+
+}, false);
+
+
+
+
 paginationRequest = {
   "pageNumber": 0,
   "pageSize": 10

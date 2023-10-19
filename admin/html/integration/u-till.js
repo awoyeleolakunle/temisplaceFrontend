@@ -2,10 +2,6 @@
 
 
 
-document.addEventListener('DOMContentLoaded', fetcAllItemCategoryName)
-
-const unitName = 'LONDON'
-let listOfItemDetails = [];
 
 //document.getElementById('itemCategoryNameListId').innerHTML="";
 
@@ -59,14 +55,24 @@ const productData = [
 //document.querySelector('.close').addEventListener('click', closeModal);
 
 // Attach click event listener to the "Add to Cart" button (you can implement cart functionality here)
-addToCartButton.addEventListener('click', () => {
-    // Add selected item to cart
-    // Implement your cart logic here
-});
+
 
 // Your existing JavaScript code continues here
 
 
+
+
+
+document.addEventListener('DOMContentLoaded',()=>{ 
+    fetcAllItemCategoryName();
+    
+})
+
+const unitName =JSON.parse(sessionStorage.getItem('temisplace-unitName'))
+console.log(unitName);
+let listOfItemDetails = [];
+let total;
+let paymentType;
 
 
 let sizeOfItemCategory = 0;
@@ -74,7 +80,7 @@ let sizeOfItemCategory = 0;
 function fetcAllItemCategoryName(){
 
     
-    fetch('http://localhost:8080/api/v1/temisplace/namesOfAllItemCategory', {
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/namesOfAllItemCategory`, {
         method :'POST',
         headers: {
             'Content-Type' : 'application/json'
@@ -94,6 +100,8 @@ function fetcAllItemCategoryName(){
     })
     .catch(error=>{
         console.log("error : ", error);
+        const message = "Network Failed";
+        {toast(message)};
     })
 
 }
@@ -111,7 +119,7 @@ function displayCategoryName(data){
 
     mainContainer.innerHTML="";
 
-   // <div class="col-xxl-2 col-lg-4 col-md-4">
+
 
     data.forEach((item, index) => {
  
@@ -163,13 +171,12 @@ listItem.addEventListener('click', ()=>{
 
 });
 
-
 }
 
 
 function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
         
-    fetch('http://localhost:8080/api/v1/temisplace/AUnitAllItemsUnderItemCategory', {
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/AUnitAllItemsUnderItemCategory`, {
         method :'POST',
         headers: {
             'Content-Type' : 'application/json'
@@ -186,10 +193,13 @@ function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
     })
     .then(data=>{
         console.log("i'm the list of item under item category ", data);
+     
         displayAllAvailableItemsUnderAnItemCategory(data)
     })
     .catch(error=>{
         console.log("error : ", error);
+        const message = "Network Failed";
+        {toast(message)};
     })
 
 }
@@ -197,11 +207,7 @@ function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
 
 
 
-
-// Initialize your listOfItemDetails array
-//let listOfItemDetails = [];
-
-function generateSizesAndPricesItem(sizesAndPrices, itemId) {
+function generateSizesAndPricesItem(sizesAndPrices, itemId, itemTitle) {
     const listItem = document.createElement('li');
     listItem.innerHTML = `
         <input type="checkbox" class="check-button" />
@@ -214,10 +220,11 @@ function generateSizesAndPricesItem(sizesAndPrices, itemId) {
 
     checkbox.addEventListener('change', () => {
         if (checkbox.checked) {
-            // Checkbox is checked, add item details
-            let itemQuantity = quantityInput.value || 0; // Get quantity or default to 0
+            
+            let itemQuantity = quantityInput.value || 0; 
             let subTotal = itemQuantity * sizesAndPrices.price;
             let itemDetails = {
+                itemTitle: itemTitle,
                 itemQuantity: itemQuantity,
                 subTotal: subTotal,
                 itemId: itemId,
@@ -225,22 +232,23 @@ function generateSizesAndPricesItem(sizesAndPrices, itemId) {
             };
             addItemDetailsToList(itemDetails);
         } else {
-            // Checkbox is unchecked, remove item details
+         
             removeItemDetailsFromList(itemId, sizesAndPrices.size);
         }
     });
 
-    // Add event listener for quantity input change
     quantityInput.addEventListener('input', () => {
         if (checkbox.checked) {
-            // Checkbox is checked, update item details with new quantity
+         
             let itemQuantity = quantityInput.value || 0;
             let subTotal = itemQuantity * sizesAndPrices.price;
             let updatedItemDetails = {
+                itemTitle : itemTitle,
                 itemQuantity: itemQuantity,
                 subTotal: subTotal,
                 itemId: itemId,
                 itemSize: sizesAndPrices.size
+                
             };
 
             updateItemDetailsInList(updatedItemDetails);
@@ -251,9 +259,12 @@ function generateSizesAndPricesItem(sizesAndPrices, itemId) {
 }
 
 function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
-    clearInitialItemsFectehedUnderItemCategory();
     const mainContainer = document.getElementById("itemCategoryNameListId");
-
+   
+   
+    clearInitialItemsFectehedUnderItemCategory();
+   
+   
     listOfItemsUnderItemCategory.forEach((item, index) => {
         const modalId = `myModal${index}`;
         const itemContainer = document.createElement('div');
@@ -310,7 +321,7 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
 
         const sizeAndPriceList = itemContainer.querySelector('#sizeAndPriceList');
         for (const sizesAndPrices of item.itemPriceAndSize) {
-            const listItem = generateSizesAndPricesItem(sizesAndPrices, item.itemId);
+            const listItem = generateSizesAndPricesItem(sizesAndPrices, item.itemId, item.itemTitle);
             sizeAndPriceList.appendChild(listItem);
         }
     });
@@ -318,18 +329,14 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
 
 function clearInitialItemsFectehedUnderItemCategory() {
 
-   // const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4');
-   // item-container
+
 
     const elements = document.querySelectorAll('.item-container');
     if (elements.length > 0) {
         
         elements.forEach(element => {
-
-           // if (element.querySelector('#itemsId')) 
+ 
                 element.innerHTML = "";
-                console.log("cleared element ", element);
-            
         });
     } else {
         console.log('No matching elements found.');
@@ -341,7 +348,7 @@ function openModal( modalId) {
     modal.style.display = 'block';
 
     modal.querySelector('.close').addEventListener('click', () => {
-        closeModal(modal); // Pass the modal as a parameter
+        closeModal(modal); 
     });
 }
 
@@ -351,6 +358,7 @@ function closeModal(modal) {
 
 function addItemDetailsToList(itemDetails) {
     listOfItemDetails.push(itemDetails);
+    displayCartDetails()
     console.log(listOfItemDetails);
 }
 
@@ -363,12 +371,18 @@ function updateItemDetailsInList(updatedItemDetails) {
         }
     }
 
+    displayCartDetails()
     console.log(listOfItemDetails);
 }
 
 function removeItemDetailsFromList(itemId, itemSize) {
-    listOfItemDetails = listOfItemDetails.filter(item => item.itemId !== itemId || item.itemSize !== itemSize);
-    console.log(listOfItemDetails);
+    const Id = parseInt(itemId);
+    const size = String(itemSize)
+    listOfItemDetails = listOfItemDetails.filter(item => item.itemId !== Id || item.itemSize !== size);
+   
+    console.log("I'm the list in after removing ",listOfItemDetails);
+    displayCartDetails();
+   
 }
 
 
@@ -377,227 +391,165 @@ function removeItemDetailsFromList(itemId, itemSize) {
 
 
 
+function displayCartDetails() {
+    const instoreContainer = document.getElementById('instoreContainerId');
+
+    const itemListContainerId = document.getElementById('itemListContainerId');
+
+    if(itemListContainerId){
+        instoreContainer.removeChild(itemListContainerId)
+    }
+
+    const itemListContainer = document.createElement('div');
+    itemListContainer.id = 'itemListContainerId';
 
 
-
-
-
-
-
-
-// function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategory) {
-    
-//     clearInitialItemsFectehedUnderItemCategory()
-
-    
-//     const mainContainer = document.getElementById("itemCategoryNameListId");
-
+    instoreContainer.prepend(itemListContainer);
   
-//     listOfItemsUnderItemCategory.forEach((item, index) => {
-//         const modalId = `myModal${index}`;
-//        // const itemsId = `itemsId${index}`;
-    
-//         const itemContainer = document.createElement('div')
-//         itemContainer.className = "col-xxl-2 col-lg-4 col-md-4";
 
-//         itemContainer.innerHTML = `
-//             <!-- Item Card Content -->
-//             <div id="itemsId" class="card custom-card overflow-hidden">
-//                 <div class="card-body">
-//                     <div class="d-flex align-items-top justify-content-between   product-link">
-//                         <div><a href="javascript:void(0);">
-//                             <span class="avatar avatar-md avatar-rounded bg-blue">
-//                             </span></a>
-//                         </div>
-//                         <div class="flex-fill ms-3">
-//                             <div class="d-flex align-items-center justify-content-between flex-wrap">
-//                                 <div>
-//                                     <p class="text-muted mb-0">${item.price} </p>
-//                                     <a href="javascript:void(0);" class="product-name">
-//                                         <h4 class="fw-semibold mt-1">${item.itemId}</h4>
-//                                     </a>
-//                                 </div>
-//                                 <div id="crm-total-customers"></div>
-//                             </div>
-//                             <div class="d-flex align-items-center justify-content-between mt-1">
-//                                 <div class="text-end">
-//                                     <p class="mb-0 text-blue fw-semibold product-description">${item.itemTitle}</p>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
+    listOfItemDetails.forEach((item, index) => {
+        const listItem = document.createElement('div');
+        listItem.className = "d-flex align-items-center justify-content-between";
 
-//             <!-- Pop-up/modal -->
-//             <div id=${ modalId} class="modal">
-//                 <div class="modal-content">
-//                     <span class="close">&times;</span>
-//                     <!-- Content of the pop-up/modal -->
-//                     <h2>Available Sizes and Prices</h2>
-//                     <ul id="sizeAndPriceList">
-//                         <!-- Populate this list with the sizes and prices dynamically -->
-//                     </ul>
-//                     <button id="addToCartButton">Add to Cart</button>
-//                 </div>
-//             </div>
-//             `;
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="me-2">
+                    <span class="avatar avatar-sm">
+                        <span class="avatar avatar-sm avatar-rounded bg-blue">												
+                        </span>
+                    </div>
+                    <div>
+                        <p class="mb-0 fw-semibold">${item.itemTitle || ""}</p>
+                        <p class="mb-0 fs-11 text-success fw-semibold">${item.itemSize || ""}</p>
+                    </div>
+                </div>
 
+                <div class="text-end">
+                    <p class="mb-0 fw-semibold">
+                        £${item.subTotal || 0}
+                    </p>
+                    <p class="mb-0 op-7 text-muted fs-11">
+                        Quantity: ${item.itemQuantity || 0}
+                    </p>
+                    <p class="mb-0 op-7 text-muted fs-11">
+                        <button   aria-label="button" type="button" class="btn btn-sm btn-success-light btn-icon delete-btn" data-item-id="${item.itemId}" data-item-size="${item.itemSize}" ><i class="ri-delete-bin-line"></i></button>
+                    </p>															
+                </div>
+            </div>
+        `;
 
-//         mainContainer.appendChild(itemContainer); 
-
-//         itemContainer.querySelector('.product-link').addEventListener('click', () => {
-//             openModal(item, modalId);
-//         });
-
-//         // Add click event listener to open the modal
-//         // listItem.addEventListener('click', () => {
-//         //     openModal(modalId);
-//         // });
-//     });
-
-//     console.log("I'm the function");
-// }
-
-
-
-
-
-// function clearInitialItemsFectehedUnderItemCategory(){
-//     const elements = document.querySelectorAll('.col-xxl-2.col-lg-4.col-md-4')
-
-//     if (elements.length > 0) {
-//         elements.forEach(element => {
-//             if((element.querySelector('#itemsId'))){
-//             element.innerHTML ="";}
-//         });
-//     } else {
-//         console.log('No matching elements found.');
-//     }
-// }
-
-
-
-// function openModal(item, modalId) {
-//     const modal = document.getElementById(modalId);
-//     modal.style.display = 'block';
-
-//     const sizeAndPriceList = modal.querySelector('#sizeAndPriceList');
-//     const addToCartButton = modal.querySelector('#addToCartButton');
-
-//     sizeAndPriceList.innerHTML = "";
-
-//     for (const sizesAndPrices of item.itemPriceAndSize) {
-//         const listItem = document.createElement('li');
-//         listItem.innerHTML = `
-//             <input type="checkbox" class="check-button" />
-//             <input type="text" class="item-quantity" placeholder="enter quantity"/>
-//             ${sizesAndPrices.size} - £${sizesAndPrices.price}
-//         `;
-//         sizeAndPriceList.appendChild(listItem);
-
-    
-//         const checkbox = listItem.querySelector('.check-button');
-//         const quantityInput = listItem.querySelector('.item-quantity');
-
-//         checkbox.addEventListener('change', () => {
-//             if (checkbox.checked) {
-//                 // Checkbox is checked, add item details
-//                 let itemQuantity = quantityInput.value || 0; // Get quantity or default to 0
-//                 let subTotal = itemQuantity * sizesAndPrices.price;
-//                 let itemId = item.itemId;
-//                 let itemDetails = {
-//                     itemQuantity: itemQuantity,
-//                     subTotal: subTotal,
-//                     itemId: itemId,
-//                     itemSize: sizesAndPrices.size
-
-//                 };
-//                 addItemDetailsToList(itemDetails);
-//             } else {
-//                 // Checkbox is unchecked, remove item details
-//                 removeItemDetailsFromList(item.itemId);
-//             }
-//         });
+        itemListContainer.appendChild(listItem);
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const itemId = event.currentTarget.getAttribute('data-item-id');
+                const itemSize = event.currentTarget.getAttribute('data-item-size');
+                console.log("i'm the itemId ", itemId);
+                console.log("i'm the itemSize ", itemSize);
+                removeItemDetailsFromList(itemId, itemSize);
+            });
+        });
         
-//         // Add event listener for quantity input change
-//         quantityInput.addEventListener('input', () => {
-//             if (checkbox.checked) {
-//                 // Checkbox is checked, update item details with new quantity
-//                 let itemQuantity = quantityInput.value || 0;
-//                 let subTotal = itemQuantity * sizesAndPrices.price;
-//                 let itemId = item.itemId;
-//                 let updatedItemDetails = {
-//                     itemQuantity: itemQuantity,
-//                     subTotal: subTotal,
-//                     itemId: itemId,
-//                     itemSize: sizesAndPrices.size
-//                 };
+        totalSumOfCartItems();
+      
 
-//                 updateItemDetailsInList(updatedItemDetails);
-//             }
-//         });
-           
-        
+    });
+}
 
+
+function totalSumOfCartItems(){
+   total = listOfItemDetails.map(item=>item.subTotal).reduce((accumulator, currentValue)=>accumulator+currentValue, 0);
+   document.getElementById('totalAmountId').innerHTML = "£"+total.toFixed(2);
+}
+
+
+let orderItemRequestList = [];
+function extractListOfItemDetailsNeeAsAListToSendToBackend(){
+
+    for(const item of listOfItemDetails){
+        orderItemDetails = {
+            itemId:item.itemId,
+            quantity: item.itemQuantity,
+            subTotal : item.subTotal
+        };
+        orderItemRequestList.push(orderItemDetails)
+    }
+
+}
+
+
+const completeBTn = document.getElementById('completeOrderBtnId');
+completeBTn.addEventListener('click', sendOrderToBackend);
+
+const radioCreditCard = document.getElementById('flexRadioDefault1'); 
+const radioCash = document.getElementById('flexRadioDefault2');
+
+radioCreditCard.addEventListener('change', function(){
+    if(this.checked){
+        paymentType = "CREDIT_DEBIT_CARD"
+        console.log('payment type : ', paymentType);
+    }
+})
+
+radioCash.addEventListener('change', function () {
+    if (this.checked) {
+        paymentType = "CASH"
+        console.log('payment type :', paymentType);
+    }
+});
+
+
+function sendOrderToBackend(){
+    extractListOfItemDetailsNeeAsAListToSendToBackend();
+
+
+
+    const numberOfAllItemQuantityOrdered = orderItemRequestList.reduce((sum, item) => sum + Number(item.quantity), 0);
+
+
+    console.log("I'm the total numbers of items purchased", numberOfAllItemQuantityOrdered);
+
+    const itemRequestDetails= {
+        orderItemRequestList : orderItemRequestList,
+        total  : total,
+        unitName : unitName,
+        orderFrom : "INSTORE",
+        paymentType : String(paymentType),
+        numberOfAllItemQuantityOrdered :numberOfAllItemQuantityOrdered
+    }
+
+
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/Orders/makeOrder`, {
+        method : 'POST',
+        headers : {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(itemRequestDetails)
+    })
+    .then(response=>{
+        if(!response.ok){
           
-
-//     }
-
-  
-//     modal.querySelector('.close').addEventListener('click', () => {
-//         closeModal(modal); // Pass the modal as a parameter
-//     });
-// }
-
-// function closeModal(modal) {
-//     modal.style.display = 'none';
-// }
-
-
-
-// function addItemDetailsToList(itemDetails){
-//     listOfItemDetails.push(itemDetails)
-//     console.log(listOfItemDetails);
-// }
+            throw new Error('Failed to make order')
+        }
+        else{
+            console.log("I'm the response data ", response.data);
+            return response.json()
+        }
+    })
+    .then(data=>{
+        console.log("response message ", data);
+        const message = "Your Order has been successfully created";
+        {toast(message)};
+        listOfItemDetails = [];
+        displayCartDetails()
 
 
-
-// function updateItemDetailsInList(updatedItemDetails){
-
-//     for( const item of listOfItemDetails){
-//         if(item.itemId===updatedItemDetails.itemId
-//              && 
-//         item.sizesAndPrices===updatedItemDetails.sizesAndPrices){
-
-//             Object.assign(item, updatedItemDetails);
-//             break;
-//         }
-//     }
-
-//     console.log(listOfItemDetails);
-// }
-
-// function removeItemDetailsFromList(itemId){
-
-//     listOfItemDetails = listOfItemDetails.filter(item=> item.itemId!= itemId)
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    })
+    .catch(error=>{
+        console.log("error : ", error);
+        const message = "Failed to create order";
+       const timer = 6000;
+        {toast(message, timer)};
+    })
+}
 

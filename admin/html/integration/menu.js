@@ -8,14 +8,14 @@ document.addEventListener('DOMContentLoaded', fetchUnitMenuDashBoardInfoFromBack
 
 
 
-
-const unitName = "LONDON";
+const unitName = JSON.parse(sessionStorage.getItem('temisplace-unitName'));
+console.log(unitName);
 let pageNumber =1;
 let pageSize = 10;
 
 function fetchUnitMenuDashBoardInfoFromBackEnd (){
 
-    fetch(`http://localhost:8080/api/v1/temisplace/unitDashboardDetails?unitName=${encodeURIComponent(unitName)}`,{
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/unitDashboardDetails?unitName=${encodeURIComponent(unitName)}`,{
         method : "POST",
         headers : {
 
@@ -38,6 +38,8 @@ function fetchUnitMenuDashBoardInfoFromBackEnd (){
     })
     .catch(error=>{
         console.log("error", error);
+        const message = "Network Failed";
+        {toast(message)};
     })
 }
 
@@ -128,7 +130,7 @@ function fectchAllItemsUnderItemCategory(itemCategory){
     }
 
     
-    fetch('http://localhost:8080/api/v1/temisplace/allItemsUnderAnItemCategory', {
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/allItemsUnderAnItemCategory`, {
         method : 'POST',
         headers : {
             'Content-Type' : 'application/json'
@@ -149,7 +151,9 @@ function fectchAllItemsUnderItemCategory(itemCategory){
         window.location.href="u-menu-item.html"
     })
     .catch(error=>{
-        console.log("error", error);
+        console.log("error : ", error);
+        message = "NetWork Failed";
+        {toast(message)};
     })
 
 }

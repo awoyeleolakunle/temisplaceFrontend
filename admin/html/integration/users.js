@@ -29,7 +29,7 @@ paginationRequest = {
 
 function fetchPaginatedUserListFromBackend() {
   console.log("i'm here")
-  fetch('http://localhost:8080/api/v1/temisplace/paginatedUserList', {
+  fetch( `${temisplaceBaseUrl}/api/v1/temisplace/paginatedUserList`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,6 +45,7 @@ function fetchPaginatedUserListFromBackend() {
     })
     .then(UserList => {
       display(UserList);
+      clearFormDetailsAfterResponseFromBackend()
       console.log("I'm the userList", UserList);
     })
     .catch(error => {
@@ -79,9 +80,9 @@ function display(userList) {
                         <i class="fe fe-more-vertical"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:void(0);">Active</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Suspend</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0);">Edit</a></li>
+                        <li><a class="dropdown-item" data-user-id="${user.id}" href="javascript:void(0);">Active</a></li>
+                        <li><a class="dropdown-item" data-user-id="${user.id}" href="javascript:void(0);">Suspend</a></li>
+                        <li><a class="dropdown-item" data-user-id="${user.id}" href="javascript:void(0);">Edit</a></li>
                     </ul>
                 </div>
             </div>
@@ -93,8 +94,60 @@ function display(userList) {
       const selectedUser = userList[index];
       populateForm(selectedUser);
     });
+
+
+    const dropdownItems = listItem.querySelectorAll('.dropdown-item');
+     dropdownItems.forEach(dropDown => {
+        dropDown.addEventListener('click', (event) => {
+            const dropDownText = event.target.textContent;
+            const userId = event.target.getAttribute('data-user-id');
+            updateUserStatus(dropDownText, userId);
+        });
+
+      });
+
+  });
+
+}
+
+
+
+function updateUserStatus(textContent, id){
+  console.log(textContent, id);
+ 
+
+  userStatusUpdataRequest = {
+    userId :id,
+    userStatus : textContent
+  }
+
+  
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/userStatusUpdate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userStatusUpdataRequest) 
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Failed to update user data");
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("User data updated successfully:", data);
+    {toast(data.data)}
+    fetchPaginatedUserListFromBackend();
+
+  })
+  .catch(error => {
+    console.error("Error updating user data:", error);
+    const message = "Network Failed";
+    {toast(message)};
   });
 }
+
 
 function populateForm(selectedUser) {
   document.getElementById('firstNameId').value = selectedUser.firstName;
@@ -145,7 +198,7 @@ function populateForm(selectedUser) {
   });
 
   document.getElementById('statusId').addEventListener('input', ()=>{
-    registrationData.status = document.getElementById('statusId').value
+    registrationData.userStatus = document.getElementById('statusId').value
   });
 
   document.getElementById('countryId').addEventListener('input', ()=>{
@@ -183,7 +236,7 @@ function upDateUser(selectedUser) {
   console.log("Updated registration update ", registrationData)
 
 
-  fetch('http://localhost:8080//api/v1/temisplace/registerOrUpdateUser', {
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/registerOrUpdateUser`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -202,6 +255,22 @@ function upDateUser(selectedUser) {
   })
   .catch(error => {
     console.error("Error updating user data:", error);
+    const message = "Network Failed";
+    {toast(message)};
   });
 }
 
+
+
+
+function  clearFormDetailsAfterResponseFromBackend(){
+  document.getElementById('firstNameId').value= "";
+  document.getElementById('lastNameId').value ="";
+  document.getElementById('userCategoryId').value ="";
+  document.getElementById('phoneNumberId').value = "";
+  document.getElementById('countryId').value = "";
+  document.getElementById('postCodeId').value = "";
+  document.getElementById('emailAddressId').value ="";
+  document.getElementById('cityId').value = "";
+  document.getElementById('statusId').value ="";
+}

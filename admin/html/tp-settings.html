@@ -43,6 +43,15 @@
     <!-- Choices Css -->
     <link rel="stylesheet" href="../assets/libs/choices.js/public/assets/styles/choices.min.css">
 
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+
+
+
+
 
 </head>
 
@@ -192,14 +201,18 @@
                                                 Footer logo:
                                             </h6>
                                             <div class="mb-4 d-sm-flex align-items-center">
+                                                
                                                 <div class="mb-0 me-5">
-                                                    <span class="avatar avatar-xxl avatar-rounded">
-                                                        <img src="../assets/images/faces/9.jpg" alt="" id="profile-img">
-                                                        <a href="javascript:void(0);" class="badge rounded-pill bg-primary avatar-badge">
-                                                            <input type="file" name="photo" class="position-absolute w-100 h-100 op-0" id="profile-change">
-                                                            <i class="fe fe-camera"></i>
-                                                        </a>
-                                                    </span>
+                                                    <button id="footerImgId" class="cloudinary-button">Upload files</button>
+                                                    <div></div>
+                                                    <!-- <span class="avatar avatar-xxl avatar-rounded"> -->
+                                                        <!-- <img src="../assets/images/faces/9.jpg" alt="" id="profile-img"> -->
+                                                       
+                                                        <!-- <a href="javascript:void(0);" class="badge rounded-pill bg-primary avatar-badge"> -->
+                                                            <!-- <input type="file" name="photo" class="position-absolute w-100 h-100 op-0" id="profile-change"> -->
+                                                            <!-- <i class="fe fe-camera"></i> -->
+                                                        <!-- </a> -->
+                                                    <!-- </span> -->
                                                 </div>
                                                 <div class="btn-group">
                                                     <button class="btn btn-primary">Change</button>
@@ -211,29 +224,29 @@
                                             </h6>
                                             <div class="row gy-4 mb-4">
                                                 <div class="col-xl-6">
-                                                    <label for="first-name" class="form-label">Slogan</label>
-                                                    <input type="text" class="form-control" id="slogan" placeholder="Temi's Place - Yummy African Meals"><br>
+                                                    <label  for="first-name" class="form-label">Slogan</label>
+                                                    <input type="text" class="form-control" id="sloganId" placeholder="Temi's Place - Yummy African Meals"><br>
                                                 <label for="bio" class="form-label">Overview:</label>
-                                                    <textarea class="form-control" id="bio" rows="5">The classic African  meal catering specialist, serving all types of customers (private, personal and commercial) - delivery and collection available!</textarea>
+                                                    <textarea  class="form-control" id="overviewId" rows="5">The classic African  meal catering specialist, serving all types of customers (private, personal and commercial) - delivery and collection available!</textarea>
 												</div>
 												
                                                 <div class="col-xl-6">
                                                     <label class="form-label">Socials</label>
                                                     <div class="input-group mb-3">
                                                         <span class="input-group-text" id="basic-addon3">facebook</span>
-                                                        <input type="text" class="form-control" id="basic-url" placeholder="/TemisPlaceUK"  aria-describedby="basic-addon3"> 
+                                                        <input type="text" class="form-control" id="facebookId" placeholder="/TemisPlaceUK"  aria-describedby="basic-addon3"> 
                                                     </div>
                                                     <div class="input-group mb-3">
                                                         <span class="input-group-text" id="basic-addon3">twitter</span>
-                                                        <input type="text" class="form-control" id="basic-url" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
+                                                        <input type="text" class="form-control" id="twitterId" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
                                                     </div>
                                                     <div class="input-group mb-3">
                                                         <span class="input-group-text" id="basic-addon3">instagram</span>
-                                                        <input type="text" class="form-control" id="basic-url" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
+                                                        <input type="text" class="form-control" id="instagramId" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
                                                     </div>
 													<div class="input-group mb-3">
                                                         <span class="input-group-text" id="basic-addon3">linkedin</span>
-                                                        <input type="text" class="form-control" id="basic-url" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
+                                                        <input type="text" class="form-control" id="linkedinId" placeholder="/TemisPlaceUK" aria-describedby="basic-addon3">
                                                     </div>
                                                 </div>  
                                             </div>
@@ -243,24 +256,81 @@
                                             <div class="row gy-4 mb-4">
                                                 <div class="col-xl-6">
                                                     <label for="email-address" class="form-label">Telephone:</label>
-                                                    <input type="text" class="form-control" id="tel" placeholder="07399 39 0002">
+                                                    <input type="text" class="form-control" id="telephoneId" placeholder="07399 39 0002">
                                                 </div>
                                                 <div class="col-xl-6">
                                                     <label for="Contact-Details" class="form-label">Contact Details:</label>
-                                                    <input type="text" class="form-control" id="Contact-Details" placeholder="Line 1 of address"><br>
-													<input type="text" class="form-control" id="Contact-Details" placeholder="Line City"><br>
-													<input type="text" class="form-control" id="Contact-Details" placeholder="Postcode">
+                                                    <input type="text" class="form-control" id="addressId" placeholder="Line 1 of address"><br>
+													<input type="text" class="form-control" id="cityId" placeholder="Line City"><br>
+													<input type="text" class="form-control" id="postCodeId" placeholder="Postcode">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+
+                                
+
+
+                             
+                             
+
+                        <!-- text-default -->
+               
+
+
+
                                     <div class="tab-pane" id="account-settings"
                                         role="tabpanel">
                                         <div class="row gap-3 justify-content-between">
                                             <div class="col-xl-7">
                                                 <div class="card custom-card shadow-none mb-0 border">
                                                     <div class="card-body">
+
+
+
+
+                                                    
+
+                                                        <div class="h3 fw-bold">Upload Item Category's name and image</div>
+
+                                                        <div>
+                    
+                                                              <!-- created this div so as to allow the admin upload food item categories and images representing them -->
+                                                                                <!-- start here-->
+                    
+                    
+                                                 
+                                                          <!-- <input id="itemImgId" type="file" class="blog-images" name="filepond" multiple data-allow-reorder="true" data-max-file-size="3MB" data-max-files="6"> -->
+                                            <button id="itemCategoryImageUrlId" class="cloudinary-button">Upload files</button>
+                                            <input id="imageOriginalPathId"></input>
+                    
+                                            <!-- text-default -->
+                                                        
+                                             <label  class=" form-label  fw-bold">Select Item Category </label>
+                                                        <select id="itemCategoryId" name="" class="col-xl-3">
+                                                            <option value=""></option>
+                                                            <option value="DRINKS">Drinks</option>
+                                                            <option value="SIDES">Sides</option>
+                                                            <option value="SOUP">Soup</option>
+                                                            <option value="RICE">Rice</option>
+                                                            <option value="SANDWICHES">Sandwiches</option>
+                                                            <option value=" SWALLOW">Swallow</option>
+                                                        </select>
+                    
+                                                    </div>
+                    
+                                                    <div class=" offset-xl-3">
+                                                    <button id="saveItemCategoryImageId" class="btn btn-primary btn-lg" >Save</button>
+                                                    </div>
+
+
+
+
+
                                                         <div class="d-sm-flex d-block align-items-top mb-4 justify-content-between">
+
+
                                                             <div>
                                                                 <p class="fs-14 mb-1 fw-semibold"><a href="./tp-items.html ">Drinks</a> </p>
                                                                 <p class="fs-12 text-muted mb-0">Use the SWITCH button to turn this Menu OFF or ON throughout the Webiste</p>
@@ -574,7 +644,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="float-end">
-                                    <button class="btn btn-primary m-1">
+                                    <button id="saveFooterBtnId" class="btn btn-primary m-1">
                                         Save Changes
                                     </button>
                                 </div>
@@ -694,6 +764,14 @@
 
     <!-- Custom JS -->
     <script src="../assets/js/custom.js"></script>  
+
+    <script src="integration/config.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script src="integration/settings.js"></script>
+    <script src="integration/footerSettting.js"></script>
+
 
 </body>
 

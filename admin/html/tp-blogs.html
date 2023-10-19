@@ -66,6 +66,12 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 
+<script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+
 
 
 
@@ -254,13 +260,15 @@
                                             <option value="LANDSCAPE">Landscape</option>
                                         </select>
                                     </div>
-                                    <div class="col-xl-12">
+                                    <div class="col-xl-6">
                                         <label class="form-label">Blog Content</label>
-                                        <div id="blogContentId"> </div>
+                                        <textarea  id="blogContentId"  class="form-control" > </textarea>
                                     </div>
                                     <div class="col-xl-12 blog-images-container">
                                         <label for="blog-author-email" class="form-label">Blog Images</label>
-                                        <input id="postImageUrlId" type="file" class="blog-images" name="filepond" multiple data-allow-reorder="true" data-max-file-size="3MB" data-max-files="6">
+                                        <!-- <input id="postImageUrlId" type="file" class="blog-images" name="filepond" multiple data-allow-reorder="true" data-max-file-size="3MB" data-max-files="6"> -->
+                                        <button id="postImageUrlId" class="cloudinary-button">Upload files</button>
+                                        <input id="imageId"></input>
                                     </div>
                                     <div class="col-xl-12">
                                         <label class="form-label">Blog Type</label>
@@ -623,7 +631,13 @@
 
     <!-- Custom JS -->
     <script src="../assets/js/custom.js"></script>
+
+    <script src="integration/config.js"></script>
+    
     <script src="integration/blogs.js"></script>
+
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
    
         
 

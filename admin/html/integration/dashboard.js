@@ -4,11 +4,9 @@
 
 
 
-
-
 const fetchDashBoardInfoFromBackend = ()=>{
 
-        fetch('http://localhost:8080/api/v1/temisplace/dashBoardInfo', {
+        fetch(`${temisplaceBaseUrl}/api/v1/temisplace/dashBoardInfo`, {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json',
@@ -41,10 +39,58 @@ const displayInfo =(dashBoardInfo)=>{
     document.getElementById("completedOrdersId").textContent= dashBoardInfo.data.completedOrders
     document.getElementById("totalCustomerId").textContent=dashBoardInfo.data.totalCustomers
     document.getElementById("cancelledOrdersId").textContent=dashBoardInfo.data.cancelledOrders
-    document.getElementById("totalRevenueId").textContent= "£" + dashBoardInfo.data.totalRevenue
+    document.getElementById("totalRevenueId").textContent= `£${dashBoardInfo.data.totalRevenue}`
+    document.getElementById("instoreOrderId").textContent = dashBoardInfo.data.instoreOrders
+    document.getElementById("onlineOrdersId").textContent = dashBoardInfo.data.onlineOrders;
+    document.getElementById("completedPercentageId").textContent =`${dashBoardInfo.data.completedPercentage}%`
+    document.getElementById("cancelledPercentageId").textContent = `${dashBoardInfo.data.cancelledPercentage}%`
+    document.getElementById("onlinePercentageId").textContent = `${dashBoardInfo.data.onlinePercentage}%`
+    document.getElementById("instorePercentageId").textContent = `${dashBoardInfo.data.instorePercentage}%`
+    document.getElementById("revenuePercentageId").textContent = `${dashBoardInfo.data.revenuePercentage}%`
+   
+
+
+
+    const listContainer = document.getElementById('unitNameAndRevenueId');
+    listContainer.innerHTML="";
+    dashBoardInfo.data.listOfAllUnitsWithMonthlyRevenue.forEach((item, index) => {
+
+        const listItem = document.createElement('li')
+        listItem.innerHTML =`
+        
+        <div class="d-flex align-items-top flex-wrap">
+                <span class="avatar avatar-sm avatar-rounded bg-success-transparent fw-semibold">
+                    ${item.unitName.substring(0,3)}
+                </span>
+            <div class="flex-fill">
+                <p class="fw-semibold mb-0">${item.unitName}</p>
+                <span class="text-muted fs-12"></span>
+            </div>
+            <div class="fw-semibold fs-15">£${item.unitCurrentMonthRevenue}</div>
+        </div>
+
+        `;
+        listContainer.appendChild(listItem)
+        
+    });
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
     
-
 
 document.addEventListener('DOMContentLoaded', fetchDashBoardInfoFromBackend)

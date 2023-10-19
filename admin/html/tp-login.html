@@ -27,6 +27,8 @@
     <!-- Icons Css -->
     <link href="../assets/css/icons.min.css" rel="stylesheet" >
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 </head>
 
@@ -45,18 +47,21 @@
                         <p class="h5 fw-semibold mb-2 text-center">Sign In</p>
                         <div class="row gy-3">
 							<div class="col-xl-12">
-                                <label for="usertype" class="form-label text-default">User Type</label>
-                                		<select class="form-select">
-											<option value="selected">Select one</option>
-											<option value="#">Staff</option>
-											<option value="#">Unit</option>
-											<option value="#">Admin</option>
+                                <label for="usertype" class="form-label text-default">Unit / Branch Name</label>
+                                		<select id="unitId" class="form-select">
+                                            <option value="">Select one</option>
+											<option value="SUNDERLAND">Sunderland</option>
+											<option value="LONDON">London</option>
+											<option value="NEWCASTLE">Newcastle</option>
+											<option value="GLOUCESTERSHIRE">Gloucestershire</option> 
+                                            <option value="COVENTRY">Coventry</option> 
+                                            
 										</select>
 
                             </div>
                             <div class="col-xl-12">
-                                <label for="signin-username" class="form-label text-default">Username</label>
-                                <input type="text" class="form-control form-control-lg" id="signin-username" placeholder="username">
+                                <label for="signin-username" class="form-label text-default">Email Address</label>
+                                <input  type="text" class="form-control form-control-lg" id="emailAddressId" placeholder="Email Address">
                             </div>
                             <div class="col-xl-12 mb-2">
                                 <label for="signin-password" class="form-label text-default d-block">Password<a href="reset-password-basic.html" class="float-end text-danger">Forget password ?</a></label>
@@ -66,8 +71,9 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 d-grid mt-2">
-                                <a href="tp-verify.html" class="btn btn-lg btn-primary">Sign In</a>
+                                <a id="signInId" class="btn btn-lg btn-primary">Sign In</a>
                             </div>
+                           
                         </div>
 
                     </div>
@@ -85,6 +91,12 @@
 
     <!-- Show Password JS -->
     <script src="../assets/js/show-password.js"></script>
+
+    <script src="integration/config.js"></script>
+
+    <script src="integration/login.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 </body>
 

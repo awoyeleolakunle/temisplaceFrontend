@@ -220,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div class="card-body">
-                                            <ul class="list-unstyled crm-top-deals mb-0">
+                                            <ul id="unitNameAndRevenueId" class="list-unstyled crm-top-deals mb-0">
                                                 <li>
                                                     <div class="d-flex align-items-top flex-wrap">
                                                             <span class="avatar avatar-sm avatar-rounded bg-success-transparent fw-semibold">
@@ -233,7 +233,7 @@
                                                         <div class="fw-semibold fs-15">£2,893</div>
                                                     </div>
                                                 </li>
-                                                <li>
+                                                <!-- <li>
                                                     <div class="d-flex align-items-top flex-wrap">
                                                         <div class="me-2">
                                                             <span class="avatar avatar-sm avatar-rounded bg-warning-transparent fw-semibold">
@@ -288,7 +288,7 @@
                                                         </div>
                                                         <div class="fw-semibold fs-15">£2,679</div>
                                                     </div>
-                                                </li>
+                                                </li> -->
                                             </ul>
                                         </div>
                                     </div>
@@ -349,7 +349,7 @@
                                                                 <a class="text-secondary" href="javascript:void(0);">View All<i class="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block"></i></a>
                                                             </div>
                                                             <div class="text-end">
-                                                                <p class="mb-0 text-success fw-semibold">+25%</p>
+                                                                <p id="revenuePercentageId" class="mb-0 text-success fw-semibold">+25%</p>
                                                                 <span class="text-muted op-7 fs-11">Today</span>
                                                             </div>
                                                         </div>
@@ -371,7 +371,7 @@
                                                         <div class="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div>
                                                                 <p class="text-muted mb-0">Online Orders</p>
-                                                                <h4 class="fw-semibold mt-1"></h4>
+                                                                <h4 id="onlineOrdersId" class="fw-semibold mt-1"></h4>
                                                             </div>
                                                             <div id="crm-conversion-ratio"></div>
                                                         </div>
@@ -380,7 +380,7 @@
                                                                 <a class="text-green" href="javascript:void(0);">View All<i class="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block"></i></a>
                                                             </div>
                                                             <div class="text-end">
-                                                                <p class="mb-0 text-danger fw-semibold">-9%</p>
+                                                                <p id="onlinePercentageId" class="mb-0 text-danger fw-semibold">-9%</p>
                                                         <span class="text-muted op-7 fs-11">Today</span>
                                                             </div>
                                                         </div>
@@ -402,7 +402,7 @@
                                                         <div class="d-flex align-items-center justify-content-between flex-wrap">
                                                             <div>
                                                                 <p class="text-muted mb-0">Instore Order</p>
-                                                                <h4 class="fw-semibold mt-1"></h4>
+                                                                <h4 id="instoreOrderId" class="fw-semibold mt-1"></h4>
                                                             </div>
                                                             <div id="crm-total-deals"></div>
                                                         </div>
@@ -411,7 +411,7 @@
                                                                 <a class="text-blue" href="javascript:void(0);">View All<i class="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block"></i></a>
                                                             </div>
                                                             <div class="text-end">
-                                                                <p class="mb-0 text-success fw-semibold">+19%</p>
+                                                                <p id="instorePercentageId" class="mb-0 text-success fw-semibold">+19%</p>
                                                                 <span class="text-muted op-7 fs-11">Today</span>
                                                             </div>
                                                         </div>
@@ -442,14 +442,14 @@
                                                                 <a class="text-success" href="javascript:void(0);">View All<i class="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block"></i></a>
                                                             </div>
                                                             <div class="text-end">
-                                                                <p class="mb-0 text-danger fw-semibold">-23%</p>
+                                                                <p id="completedPercentageId" class="mb-0 text-danger fw-semibold">-23%</p>
                                                         <span class="text-muted op-7 fs-11">Today</span>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> 
                                     </div>									
 								 <div class="col-xxl-6 col-lg-6 col-md-6">
                                         <div class="card custom-card overflow-hidden">
@@ -473,7 +473,7 @@
                                                                 <a class="text-danger" href="javascript:void(0);">View All<i class="ti ti-arrow-narrow-right ms-2 fw-semibold d-inline-block"></i></a>
                                                             </div>
                                                             <div class="text-end">
-                                                                <p class="mb-0 text-success fw-semibold">-12%</p>
+                                                                <p id="cancelledPercentageId" class="mb-0 text-success fw-semibold">-12%</p>
                                                         <span class="text-muted op-7 fs-11">Today</span>
                                                             </div>
                                                         </div>
@@ -544,6 +544,8 @@
 
     <!-- Custom JS -->
     <script src="../assets/js/custom.js"></script>
+
+    <script src="integration/config.js"></script>
 
     <script src="integration/dashboard.js"></script>
 

@@ -43,6 +43,8 @@
     <!-- Choices Css -->
     <link rel="stylesheet" href="../assets/libs/choices.js/public/assets/styles/choices.min.css">
 
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
 </head>
 
@@ -289,7 +291,7 @@
                                                     <a class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#active-orders" aria-selected="false" tabindex="-1">Active Orders</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
-                                                    <a class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#completed-orders" aria-selected="false" tabindex="-1">Completed</a>
+                                                    <a id="completedOrdersId" class="nav-link" data-bs-toggle="tab" role="tab" aria-current="page" href="#completed-orders" aria-selected="false" tabindex="-1">Completed</a>
                                                 </li>
                                                 <li class="nav-item" role="presentation">
                                                     <a class="nav-link active" data-bs-toggle="tab" role="tab" aria-current="page" href="#cancelled-orders" aria-selected="true">Cancelled</a>
@@ -305,7 +307,7 @@
                                             <div class="tab-pane text-muted border-0 p-0" id="active-orders" role="tabpanel">
                                                 <div class="table-responsive">
                                                     <table class="table card-table table-vcenter text-nowrap mb-0">
-                                                        <tbody class="active-tab">
+                                                        <tbody id="activeTableBodyId" class="active-tab">
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
@@ -371,7 +373,7 @@
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="lh-1">
@@ -500,15 +502,17 @@
                                                                         <p class="mb-0">On it's way</p>
                                                                     </div>
                                                                 </td>
-                                                            </tr>
+                                                            </tr> -->
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
+
+                                            completed
                                             <div class="tab-pane text-muted border-0 p-0" id="completed-orders" role="tabpanel">
                                                 <div class="table-responsive">
-                                                    <table class="table card-table table-vcenter text-nowrap mb-0">
-                                                        <tbody class="active-tab">
+                                                    <table  class="table card-table table-vcenter text-nowrap mb-0">
+                                                        <tbody id="completedTableBodyId" class="active-tab">
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
@@ -573,7 +577,8 @@
                                                                     </div>
                                                                 </td>																
                                                             </tr>
-                                                            <tr>
+
+                                                            <!-- <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
                                                                         <div class="lh-1">
@@ -829,15 +834,18 @@
                                                                         <p class="mb-0">Delivered</p>
                                                                     </div>
                                                                 </td>																
-                                                            </tr>
+                                                            </tr> -->
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
+
+
+
                                             <div class="tab-pane text-muted border-0 p-0 active show" id="cancelled-orders" role="tabpanel">
                                                 <div class="table-responsive">
                                                     <table class="table card-table table-vcenter text-nowrap mb-0">
-                                                        <tbody class="active-tab">
+                                                        <tbody id="cancelledTableBodyId" class="active-tab">
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
@@ -889,6 +897,7 @@
                                                                     </a>
                                                                 </td>
                                                             </tr>
+                                                            
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex align-items-center">
@@ -1159,7 +1168,12 @@
 
     <!-- Custom JS -->
     <script src="../assets/js/custom.js"></script>
+
+    <script src="integration/config.js"></script>
+    
     <script src="integration/u-order.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 </body>
 

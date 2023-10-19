@@ -27,6 +27,9 @@
     <!-- Icons Css -->
     <link href="../assets/css/icons.min.css" rel="stylesheet" >
 
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 </head>
 
@@ -68,12 +71,12 @@
                                 </div>
                             </div>
                             <div class="col-xl-12 d-grid mt-2">
-                                <a href="tp-dashboard.html" class="btn btn-lg btn-primary">Admin</a>
+                                <a  id="confirmOtpBtnId" class="btn btn-lg btn-primary">Confirm OTP</a>
                             </div>
 							
-                            <div class="col-xl-12 d-grid mt-2">
-                                <a href="u-menu.html" class="btn btn-lg btn-primary">Unit // Staff</a>
-                            </div>	
+                            <!-- <div class="col-xl-12 d-grid mt-2">
+                                <a  class="btn btn-lg btn-primary">Unit // Staff</a>
+                            </div>	 -->
 							
                         </div>
                         <div class="text-center">
@@ -94,6 +97,14 @@
 
     <!-- Internal Two Step Verification JS -->
     <script src="../assets/js/two-step-verification.js"></script>
+
+    <script src="integration/config.js"></script>
+    
+    <script src="integration/verification.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    >
 
 </body>
 
