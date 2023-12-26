@@ -8,6 +8,10 @@ console.log("Hey I'm here");
 
 let emailAddresInput, passwordInput, unitName
 
+
+emailAddresInput = document.getElementById('emailAddressId').value;
+passwordInput = document.getElementById('signin-password').value;
+
 document.getElementById('emailAddressId').addEventListener('input', ()=>{
     emailAddresInput = document.getElementById('emailAddressId').value;
   
@@ -17,10 +21,10 @@ document.getElementById('signin-password').addEventListener('input', ()=>{
   console.log(passwordInput);
 })
 
-unitName = document.getElementById('unitId').value;
+
 document.getElementById('unitId').addEventListener('change', ()=>{
     unitName = document.getElementById('unitId').value
-    sessionStorage.setItem('temisplace-unitName', JSON.stringify(unitName));
+    sessionStorage.setItem('temisplace-unitName', unitName);
 
   
 })
@@ -38,6 +42,9 @@ const loginRequest ={
 
         
 const sendLoginDataToBackend = ()=>{
+
+    unitName = document.getElementById('unitId').value;
+    sessionStorage.setItem('temisplace-unitName', unitName);
    
     loginRequest.emailAddress = emailAddresInput
     loginRequest.password = passwordInput
@@ -61,7 +68,7 @@ const sendLoginDataToBackend = ()=>{
     .then(data => {
         const jwtToken = data.data; 
         emailAddresInput = loginRequest.emailAddress; 
-        localStorage.setItem('email', emailAddresInput); 
+        sessionStorage.setItem('email', emailAddresInput); 
         userRole(jwtToken);
     })
       
@@ -82,7 +89,8 @@ signInBtn.addEventListener('click',function(){
 
 
     
-const sendOtPForVerification =()=>{
+const sendOtPForVerification =(fullName)=>{
+
 
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/sendOtp?emailAddress=${encodeURIComponent(emailAddresInput)}`, {
         method: 'POST',
@@ -101,8 +109,15 @@ const sendOtPForVerification =()=>{
         const message = data.data;
         {toast(message)};
 
+        
+    const stringifiedAdminFullNameToBePassedWithUrl = JSON.stringify(fullName)
+    const encodedAdminFullName  = encodeURIComponent(stringifiedAdminFullNameToBePassedWithUrl)
+
+
+    const url =  `tp-verify.html?adminFullName=${encodedAdminFullName}`;
+
         setInterval(()=>{
-             window.location.href = "tp-verify.html";
+             window.location.href = url;
         },5000)
        
     })
@@ -123,6 +138,10 @@ const userRole = (jwtToken)=>{
     const payloadJSON = atob(payloadBase64);
     const payload = JSON.parse(payloadJSON);
     const userRoles = payload.roles;
+    const firstName = payload.firstName;
+    const lastName = payload.lastName
+
+    const fullName = `${firstName} ${lastName}`
 
     console.log(userRoles);
 
@@ -131,26 +150,41 @@ const userRole = (jwtToken)=>{
     if (userRoles[0] === "ADMIN") {
         console.log("I'm in here ", userRoles[0]);
     
-        localStorage.setItem('temisplaceAdminToken', jwtToken);
-        sendOtPForVerification();
+        sessionStorage.setItem('temisplaceToken', JSON.stringify(jwtToken));
+        sendOtPForVerification(fullName);
 
     } else if (userRoles[0] === "UNIT") {
         console.log("I'm in here ", userRoles[0]);
         console.log("unit unit");
         
-       
-        localStorage.setItem('temisplaceUnitEmailAddress', loginRequest.emailAddress);
-        localStorage.setItem('temisplaceUnitToken', jwtToken);
-        sendOtPForVerification();
+        sessionStorage.setItem('temisplaceUnitEmailAddress', loginRequest.emailAddress);
+        sessionStorage.setItem('temisplaceToken', JSON.stringify(jwtToken));
+        if(!unitName){
+            const message = "Kindly select your unit / brancch name";
+            const timer = 2000;
+            {toast(message, timer)}
+          
+        }else{
+            sendOtPForVerification(fullName);
+        }
     } else if (userRoles[0] === "STAFF") {
       
-        localStorage.setItem('temisplaceStaffEmailAddress', loginRequest.emailAddress);
-        localStorage.setItem('temisplaceStaffToken', jwtToken);
-        sendOtPForVerification();
+        sessionStorage.setItem('temisplaceStaffEmailAddress', loginRequest.emailAddress);
+        sessionStorage.setItem('temisplaceToken', JSON.stringify(jwtToken));
+        const unitName = sessionStorage.getItem('temisplace-unitName');
+        if(!unitName){
+            const message = "Kindly select your unit / branch name";
+            const timer = 4000;
+            {toast(message, timer)}
+      
+        }else{
+            sendOtPForVerification(fullName);
+        }
+       
     } else if (userRoles[0] === "CUSTOMER") {
-        localStorage.setItem('temisplaceCustomerEmailAddress', loginRequest.emailAddress);
-        localStorage.setItem('temisplaceCustomerToken', jwtToken);
-        sendOtPForVerification();
+        sessionStorage.setItem('temisplaceCustomerEmailAddress', loginRequest.emailAddress);
+        sessionStorage.setItem('temisplaceCustomerToken', JSON.stringify(jwtToken));
+        sendOtPForVerification(fullName);
     }
 }
 

@@ -1,7 +1,7 @@
 
 let slogan, overview, telephone, facebook, twitter, instagram, linkedin, address, city, postCode, footerImgUrl
 
-
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceAdminToken'));
 
 function editFooterDetails(){
     slogan = document.getElementById('sloganId').value;
@@ -108,7 +108,8 @@ fetch(`${temisplaceBaseUrl}/api/v1/temisplace/footerCreationOrUpdate`, {
 
     method :'Post',
     headers: {
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'authorization' : jwtToken
     },
     body: JSON.stringify(footerObject)
     

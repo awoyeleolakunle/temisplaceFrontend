@@ -8,7 +8,10 @@ document.addEventListener('DOMContentLoaded', loadAndDisplayUnitItemsUnderAnItem
 
 
 
-const unitName =JSON.parse(sessionStorage.getItem('temisplace-unitName'));
+
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+
+const unitName = sessionStorage.getItem('temisplace-unitName');
 
 function loadAndDisplayUnitItemsUnderAnItemCategory() {
 
@@ -29,10 +32,12 @@ function loadAndDisplayUnitItemsUnderAnItemCategory() {
         
         const isToggleChecked = localStorage.getItem(toggleId) === 'true';
 
+
+       // ../assets/images/media/media-39.jpg
         listItem.innerHTML = `
             <div data-index=${index} class="d-flex gap-2 flex-wrap align-items-center">
                 <span class="avatar avatar-xl me-1">
-                    <img src="../assets/images/media/media-39.jpg" class="img-fluid" alt="...">
+                    <img src="${item.itemImgUrl}" class="img-fluid" alt="...">
                 </span>
                 <div class="flex-fill">
                     <a href="javascript:void(0);" class="fs-14 fw-semibold mb-0">${item.itemTitle}</a>
@@ -41,7 +46,8 @@ function loadAndDisplayUnitItemsUnderAnItemCategory() {
                     </p>
                     <div class="item-size-and-price">
                         ${item.itemPriceAndSize.map(sizeAndPrice => `
-                            <input type="checkbox" id="${sizeAndPrice.size}" name="${sizeAndPrice.size}" value="${sizeAndPrice.size}" ${isToggleChecked ? 'checked' : ''}>
+                            <input type="checkbox" id="${sizeAndPrice.size}+${item.itemTitle}+${sizeAndPrice.price}" name="${sizeAndPrice.size}" value="${sizeAndPrice.size}"  ${sizeAndPrice.isAvailable===true ? 'checked': ''}>
+                           
                             <span class="text-muted fs-11">${sizeAndPrice.size} - £${sizeAndPrice.price}</span> | 
                         `).join('')}
                     </div>
@@ -77,8 +83,36 @@ function loadAndDisplayUnitItemsUnderAnItemCategory() {
                 addItemAvailabilityToUnit(itemId)
             }
         });
+
+
+
+
+        
+        item.itemPriceAndSize.forEach((sizeAndPrice) => {
+            const sizeCheckbox = document.getElementById(`${sizeAndPrice.size}+${item.itemTitle}+${sizeAndPrice.price}`);
+
+            const checkItemSizeAndPriceBtn = 
+            
+            sizeCheckbox.addEventListener('change', () => {
+                if (sizeCheckbox.checked) {
+                    addItemSizeAndPriceAvailabilityToUnit(sizeAndPrice.id)
+
+                }
+
+                if(!sizeCheckbox.checked){
+                    removeItemSizeAndPriceAvailabilityFromUnit(sizeAndPrice.id)
+                }
+               
+            }
+            )
+
+
+
     });
+})
 }
+
+
 
 
 
@@ -93,9 +127,10 @@ function addItemAvailabilityToUnit(itemId){
     }
 
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/unitItemAvailabilityAddition`, {
-        method : 'POST',
-        headers :{
-            'Content-Type' : 'application/json'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken
         },
         body : JSON.stringify(unitItemAvailabilityRequest)        
     })
@@ -110,9 +145,9 @@ function addItemAvailabilityToUnit(itemId){
        }
     })
     .then(data=>{
-        const message = data;
+        const message = data.data;
         const timer = 6000;
-        {toast(message)};
+        {toast(message, timer)};
     })
     .catch(error=>{
         console.log("error : ", error);
@@ -132,9 +167,10 @@ function  removeItemAvailabilityFromUnit(itemId) {
     }
     
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/unitItemAvailabilityRemoval`, {
-        method : 'POST',
-        headers :{
-            'Content-Type' : 'application/json'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken
         },
         body : JSON.stringify(unitItemAvailabilityRequest) 
     })
@@ -147,7 +183,7 @@ function  removeItemAvailabilityFromUnit(itemId) {
         }
      })
      .then(data=>{
-        const message = data;
+        const message = data.data;
         const timer = 6000;
         {toast(message, timer)};
      })
@@ -158,3 +194,99 @@ function  removeItemAvailabilityFromUnit(itemId) {
      })
 }
 
+
+
+
+function addItemSizeAndPriceAvailabilityToUnit(Id){
+
+    console.log("i'm the itemSizeAndPriceId in addition  ", Id);
+
+
+    const updateAvailableItemSizeAndPriceInAunitRequest  ={
+        "unitName" :unitName,
+        "id" : Id
+    }
+
+
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/itemSizeAndPriceAvailabilityAdditionToAUnit`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken
+        },
+        body : JSON.stringify(updateAvailableItemSizeAndPriceInAunitRequest)        
+    })
+
+    .then(response=>{
+       if(!response.ok){
+        throw new Error('failed to update')
+
+       }
+       else{
+        return response.json()
+       }
+    })
+    .then(data=>{
+        const message = data.data;
+        const timer = 6000;
+        {toast(message, timer)};
+    })
+    .catch(error=>{
+        console.log("error : ", error);
+        const message = "Network Failed";
+        {toast(message)};
+    })
+
+}
+
+
+              
+function removeItemSizeAndPriceAvailabilityFromUnit(Id){
+
+
+    console.log("i'm the itemSizeAndPriceId in removal ", Id);
+
+
+
+
+    
+    const updateAvailableItemSizeAndPriceInAunitRequest  ={
+        "unitName" :unitName,
+        "id" : Id
+    }
+
+
+    fetch(`${temisplaceBaseUrl}/api/v1/temisplace/itemSizeAndPriceAvailabilityRemovalFromAUnit`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken
+        },
+        body : JSON.stringify(updateAvailableItemSizeAndPriceInAunitRequest)        
+    })
+
+    .then(response=>{
+       if(!response.ok){
+        throw new Error('failed to update')
+       }
+       else{
+        return response.json()
+       }
+    })
+    .then(data=>{
+        const message = data.data;
+        const timer = 6000;
+        {toast(message, timer)};
+    })
+    .catch(error=>{
+        console.log("error : ", error);
+        const message = "Network Failed";
+        {toast(message)};
+    })
+
+}
+
+
+
+
+// ${isToggleChecked ? 'checked' : ''

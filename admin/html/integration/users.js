@@ -4,6 +4,8 @@
 
 console.log("Hello ");
 
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+
 document.addEventListener('DOMContentLoaded', fetchPaginatedUserListFromBackend)
 
 let listOfUsers = [];
@@ -125,7 +127,8 @@ function updateUserStatus(textContent, id){
   fetch(`${temisplaceBaseUrl}/api/v1/temisplace/userStatusUpdate`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
     },
     body: JSON.stringify(userStatusUpdataRequest) 
   })
@@ -239,7 +242,8 @@ function upDateUser(selectedUser) {
   fetch(`${temisplaceBaseUrl}/api/v1/temisplace/registerOrUpdateUser`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
     },
     body: JSON.stringify(registrationData) 
   })

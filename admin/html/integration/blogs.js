@@ -2,6 +2,9 @@
 
 
 
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+
+console.log( "I'm the jwtToken ", jwtToken);
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -29,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-let blogTitle, postAuthor, email, publishDate, publishTime, publishStatus, blogPostCategory, blogType, blogContent, postImageUrl 
+let blogTitle, postAuthor, email, publishDate, publishTime, publishStatus, blogPostCategory, blogType, blogContent, postImageUrl;
 
 
 
@@ -55,13 +58,29 @@ function formatTimeTo12Hour(time) {
 
 
 const freeRadioButton = document.getElementById('blog-free1');
+
+if (freeRadioButton.checked) {
+  blogType = document.getElementById('freeCheckId').innerText.toUpperCase()
+  console.log(blogType);
+  console.log('Selected Option: ', blogType);
+}
+
+
 const paidRadioButton = document.getElementById('blog-paid1');
+
+
+if (paidRadioButton.checked) {
+  blogType = document.getElementById('paidCheckId').innerText.toUpperCase()
+  console.log(blogType);
+  console.log('Selected Option: Paid');
+}
+
 
 freeRadioButton.addEventListener('change', () => {
   if (freeRadioButton.checked) {
     blogType = document.getElementById('freeCheckId').innerText.toUpperCase()
     console.log(blogType);
-    console.log('Selected Option: Free');
+    console.log('Selected Option: ', blogType);
   }
 });
 
@@ -107,7 +126,7 @@ paginationRequest = {
 
 function fetchPaginatedblogPostListFromBackend() {
   console.log("i'm here")
-  fetch('http://localhost:8080/api/v1/temisplace/allBlogPost', {
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/allBlogPost`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -154,6 +173,7 @@ const editBlogDetails = ()=>{
 
     document.getElementById('blogContentId').addEventListener('input', ()=>{
       blogContent = document.getElementById('blogContentId').value;
+      console.log(blogContent);
     });
 
     document.getElementById('postImageUrlId').addEventListener('input', ()=>{
@@ -162,6 +182,7 @@ const editBlogDetails = ()=>{
 
     document.getElementById('blogCategoryId').addEventListener('input', ()=>{
       blogPostCategory = document.getElementById('blogCategoryId').value
+    
     })     
 
     document.getElementById('publishStatusId').addEventListener('input', ()=>{
@@ -172,21 +193,33 @@ const editBlogDetails = ()=>{
 
 
 const blogPostJsonData = {
- "postTitle": "", 
-  "postAuthor" : "",
-   "email" : "", 
-   "publishDate" : "", 
-   "publishTime" : "", 
-   "publishStatus ": "",
-   "blogPostCategory ": "", 
-   "blogType" : "", 
-   "blogContent ": "", 
-   "postImageUrl ": ""
-}
+  "postTitle": "", 
+   "postAuthor" : "",
+    "email" : "", 
+    "publishDate" : "", 
+    "publishTime" : "",
+    "blogPostCategory": "", 
+    "blogType" : "", 
+    "blogContent ": "", 
+    "postImageUrl ": "",
+    "publishStatus ": "",
+ }
 
 editBlogDetails();
 
+
+console.log("I'm the text area ", document.getElementById('blogContentId'));
+
 function sendBlogPostJsonDataToBackend() {
+
+  blogTitle =  document.getElementById('blogTitleId').value;
+  postAuthor = document.getElementById('postAuthorId').value; 
+  email = document.getElementById('emailId').value;
+  blogContent = document.getElementById('blogContentId').value
+  blogPostCategory = document.getElementById('blogCategoryId').value
+  publishStatus = document.getElementById('publishStatusId').value
+
+
 
 
 
@@ -197,16 +230,17 @@ function sendBlogPostJsonDataToBackend() {
   blogPostJsonData.publishTime = publishTime;
   blogPostJsonData.blogType = blogType;
   blogPostJsonData.publishStatus = publishStatus.toUpperCase();
-  blogPostJsonData.blogPostCategory =  blogPostCategory;
+  blogPostJsonData.blogPostCategory =  blogPostCategory.toUpperCase();
   blogPostJsonData.blogContent = blogContent;
   blogPostJsonData.postImageUrl = postImageUrl;
 
   console.log("i'm here")
-  fetch('http://localhost:8080/api/v1/temisplace/blog/blogPostCreation', {
-      method: 'POST',
-      headers: {
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/blog/blogPostCreation`, {
+    method: 'POST',
+    headers: {
         'Content-Type': 'application/json',
-      },
+        "Authorization" : jwtToken
+    },
       body: JSON.stringify(blogPostJsonData)
     })
     .then(response => {
@@ -216,7 +250,9 @@ function sendBlogPostJsonDataToBackend() {
       return response.json();
     })
     .then(data => {
-      alert ("success")
+      const message = data.data;
+      const timer = 3000;
+      {toast(message, timer)};
       console.log("Response from backend:", data);
       fetchPaginatedblogPostListFromBackend()
     })
@@ -244,6 +280,8 @@ function display(listOfBlogPost){
     const listItem = document.createElement("li");
     listItem.className = "list-group-item";
 
+    
+
     listItem.innerHTML = `
   <div data-index=${index} class="d-flex gap-2 flex-wrap align-items-center">
       <span class="avatar avatar-xl me-1">
@@ -262,9 +300,9 @@ function display(listOfBlogPost){
 <i class="fe fe-more-vertical"></i>
 </a>
 <ul class="dropdown-menu">
-<li><a class="dropdown-item" href="javascript:void(0);">Active</a></li>
-<li><a class="dropdown-item" href="javascript:void(0);">Suspend</a></li>
-<li><a a class="dropdown-item" href="javascript:void(0);">Edit</a></li>
+<li><a class="dropdown-item"  data-blogPost-id=${blogPost.id} href="javascript:void(0);">Active</a></li>
+<li><a class="dropdown-item" data-blogPost-id=${blogPost.id} href="javascript:void(0);">Suspend</a></li>
+<li><a  class="dropdown-item" data-blogPost-id=${blogPost.id} href="javascript:void(0);">Delete</a></li>
 </ul>
 </div>
       </div>
@@ -279,24 +317,106 @@ listItem.addEventListener('click', () => {
   populateForm(selectedBlogPost);
 });
 
+
+
+const dropdownItems = listItem.querySelectorAll('.dropdown-item');
+dropdownItems.forEach(dropDown => {
+   dropDown.addEventListener('click', (event) => {
+       const dropDownText = event.target.textContent;
+       const blogPostId = event.target.getAttribute('data-blogPost-id');
+       dropDownText=='Delete'? deteleBlogPost(blogPostId): updateBlogPostStatus(dropDownText, blogPostId);
+   });
+
   });
+
+})
 
 }
 
-
-
 function populateForm(selectedBlogPost) {
+
   console.log("I'm the title ",   selectedBlogPost.postTitle);
   document.getElementById('blogTitleId').value = selectedBlogPost.postTitle;
   document.getElementById('postAuthorId').value = selectedBlogPost.postAuthor;
   document.getElementById('emailId').value = selectedBlogPost.email;
   document.getElementById('blogContentId').value = selectedBlogPost.blogContent;
   document.getElementById('postImageUrlId').value = selectedBlogPost.postImageUrl;
-  document.getElementById('postCodeId').value = selectedUser.postCode;
+  // document.getElementById('postCodeId').value = selectedBlogPost.postCode;
   document.getElementById('blogCategoryId').value = selectedBlogPost.blogPostCategory;
   document.getElementById('publishStatusId').value = selectedBlogPost.publishStatus;
   document.getElementById('publishDateId').value = selectedBlogPost.publishDate;
   document.getElementById('publishTimeId').value = selectedBlogPost.publishTime;
 
   console.log("I'm the selected blog post's title ", selectedBlogPost.postTitle);
+
+}
+
+
+function deteleBlogPost(blogPostId){
+
+  console.log("I'm the delete function : ", blogPostId);
+
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/blogPostDeletion?id=${encodeURIComponent(blogPostId)}`, {
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
+    },
+    
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed");
+      }
+      return response.json();
+    })
+    .then(data => {
+      const message = data.data;
+      const timer = 3000;
+      {toast(message, timer)};
+      console.log("Response from backend:", data);
+      fetchPaginatedblogPostListFromBackend()
+    })
+     .catch(error => {
+      console.log("error :" , error  );
+      console.error(error);
+    });
+
+}
+
+
+function updateBlogPostStatus(dropDownText , blogPostId){
+
+  console.log("I'm the update function : ", dropDownText ,  blogPostId);
+  const blogPostStatusUpdateRequest = {
+    id : Number(blogPostId),
+    blogPostStatus : dropDownText.toUpperCase()
+  }
+
+
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/blogPostStatusUpdate`, {
+    method: 'PATCH',
+    headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
+    },
+      body: JSON.stringify(blogPostStatusUpdateRequest)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed");
+      }
+      return response.json();
+    })
+    .then(data => {
+      const message = data.data;
+      const timer = 3000;
+      {toast(message, timer)};
+      console.log("Response from backend:", data);
+      fetchPaginatedblogPostListFromBackend()
+    })
+     .catch(error => {
+      console.log("error :" , error  );
+      console.error(error);
+    });
 }

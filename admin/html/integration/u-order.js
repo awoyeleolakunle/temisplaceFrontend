@@ -11,8 +11,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     })
 
 
-
-const unitName = JSON.parse(sessionStorage.getItem('temisplace-unitName'))
+const unitName = sessionStorage.getItem('temisplace-unitName')
 
 
 function fetchUnitOrderDetailsUnderOrderStatus(){
@@ -115,7 +114,6 @@ function fetchAllCompletedOrdersUnderOrderStatus(){
 }
 
 
-
 function displayOrdersUnderOrderStatus(data){
 
 
@@ -138,20 +136,20 @@ function displayOrdersUnderOrderStatus(data){
             </div>
             <div class="align-items-center">
                 <span class="fs-12 text-muted">Name</span>
-                <p class="mb-0">Lisa Rebecca</p>
+                <p class="mb-0">${item.firstName}</p>
             </div>
         </div>
     </td>
                                                                     <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">email</span>
-            <p class="mb-0 fw-semibold">amanduio@gmail.com</p>
+            <p class="mb-0 fw-semibold">${item.emailAddress}</p>
         </div>
     </td>																
     <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">Mobile</span>
-            <p class="mb-0 fw-semibold">07235 221451</p>
+            <p class="mb-0 fw-semibold">${item.phoneNumber}</p>
         </div>
     </td>
     <td>
@@ -264,20 +262,20 @@ function displayOrdersUnderActiveOrderStatus(data){
             </div>
             <div class="align-items-center">
                 <span class="fs-12 text-muted">Name</span>
-                <p class="mb-0">Amanda Nanes</p>
+                <p class="mb-0">${item.firstName}</p>
             </div>
         </div>
     </td>
     <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">email</span>
-            <p class="mb-0 fw-semibold">amanduio@gmail.com</p>
+            <p class="mb-0 fw-semibold">${item.emailAddress}</p>
         </div>
     </td>																
     <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">Mobile</span>
-            <p class="mb-0 fw-semibold">pending Number</p>
+            <p class="mb-0 fw-semibold">${item.phoneNumber}</p>
         </div>
     </td>
     <td>
@@ -350,9 +348,10 @@ function handleDropdownChange(itemId, status){
 
    fetch( `${temisplaceBaseUrl}/api/v1/temisplace/activeOrderStatusAndOrderStatusManagement`, {
 
-    method : 'POST',
-    headers : {
-        'Content-Type' : 'application/json'
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
     },
     body : JSON.stringify(activeOrderStatusAndOrderStatusRequest)
    })
@@ -366,7 +365,7 @@ function handleDropdownChange(itemId, status){
     })
     .then(data=>{
         console.log("i'm the info response", data);
-        const message = data;
+        const message = data.data;
         {toast(message)};
     })
     .catch(error=>{
@@ -400,6 +399,7 @@ function fetchAllACancelledOrdersUnderOrderStatus(){
         if(!response.ok){
             throw new Error('Failed to load')
         }
+
         else{
             return response.json()
         }
@@ -443,20 +443,20 @@ function displayOrdersUnderCancelledOrderStatus(data){
             </div>
             <div class="align-items-center">
                 <span class="fs-12 text-muted">Name</span>
-                <p class="mb-0">Hailey Bobber</p>
+                <p class="mb-0">${item.firstName}</p>
             </div>
         </div>
     </td>
      <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">email</span>
-            <p class="mb-0 fw-semibold">amanduio@gmail.com</p>
+            <p class="mb-0 fw-semibold">${item.emailAddress}</p>
         </div>
     </td>																
     <td>
         <div class="align-items-center">
             <span class="fs-12 text-muted">Mobile</span>
-            <p class="mb-0 fw-semibold">07235 221451</p>
+            <p class="mb-0 fw-semibold">${item.phoneNumber}</p>
         </div>
     </td>
     <td>
@@ -487,7 +487,6 @@ function displayOrdersUnderCancelledOrderStatus(data){
     `;
 
     tableBody.appendChild(listItem);
-
 
 });
 

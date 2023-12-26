@@ -5,6 +5,8 @@
 
 let  itemCategoryName, itemCategoryImageUrl;
 
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+
 document.getElementById("itemCategoryImageUrlId").addEventListener("click", function(){
 
     cloudinary.createUploadWidget({
@@ -38,8 +40,11 @@ document.getElementById("itemCategoryImageUrlId").addEventListener("click", func
 
 
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/itemCategoryNameAndImageCreation`, {
-        method: 'POST',
-        headers: {'Content-Type' : 'application/json'},
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          "Authorization" : jwtToken
+      },
         body : JSON.stringify(itemCategoryNameAndImageRequet)
     })
 

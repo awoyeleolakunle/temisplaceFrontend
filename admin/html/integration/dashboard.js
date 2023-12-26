@@ -4,7 +4,21 @@
 
 
 
+
+
+const adminNameParam= new URLSearchParams(window.location.search)
+const adminName = adminNameParam.get('adminFullName') 
+
+if(adminName){
+    const decodedAdminName = decodeURIComponent(adminName)
+    console.log("Im the decoded region ", decodedAdminName);
+    const cleanedAdminName = decodedAdminName.replace(/^"|"$/g, '').replace(/\\"/g, '');
+    document.getElementById('adminFullNameId').innerText =`Welcome back, ${cleanedAdminName} !` ;
+}
+
+
 const fetchDashBoardInfoFromBackend = ()=>{
+
 
         fetch(`${temisplaceBaseUrl}/api/v1/temisplace/dashBoardInfo`, {
             method: 'POST', 

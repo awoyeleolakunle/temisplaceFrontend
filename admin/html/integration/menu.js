@@ -1,17 +1,25 @@
 
 
 
+const unitName = sessionStorage.getItem('temisplace-unitName');
+
+
+
+console.log("Ope ooo I'm the unit ooo  : ", unitName)
+
+let pageNumber =1;
+let pageSize = 10;
 
 
 document.addEventListener('DOMContentLoaded', fetchUnitMenuDashBoardInfoFromBackEnd)
 
 
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'))
 
 
-const unitName = JSON.parse(sessionStorage.getItem('temisplace-unitName'));
+
 console.log(unitName);
-let pageNumber =1;
-let pageSize = 10;
+
 
 function fetchUnitMenuDashBoardInfoFromBackEnd (){
 
@@ -133,7 +141,8 @@ function fectchAllItemsUnderItemCategory(itemCategory){
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/allItemsUnderAnItemCategory`, {
         method : 'POST',
         headers : {
-            'Content-Type' : 'application/json'
+            'Content-Type' : 'application/json',
+            
         },
         body: JSON.stringify(itemCategoryAndPaginationRequest)
     })

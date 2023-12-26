@@ -10,6 +10,11 @@ itemPaginationListRequest = {
 }
 
 
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+
+
+console.log("I'm the jwtToke : ", jwtToken);
+
 const fetchPaginatedItemListFromBackend=()=>{
 
 
@@ -47,7 +52,7 @@ document.addEventListener('DOMContentLoaded', fetchPaginatedItemListFromBackend)
 
 let itemImg, itemTitle, size1, price1, size2, price2, size3, price3, size4, price4,
   ingredient1, ingredient2, ingredient3, ingredient4, ingredient5, ingredient6, ingredient7, ingredient8,
-  allergy, publishingType, itemCategory;
+  allergy, publishingType, itemCategory, itemOverView;
 
   postItemBtn = document.getElementById('postItemBtnId')
 
@@ -59,6 +64,7 @@ const itemJsonData = {
   "ingredients": [],
   "allergy": "",
   "publishingType": "",
+  "itemOverView" : "",
 
 };
 
@@ -120,6 +126,7 @@ const editFieldValue = ()=>{
     allergy = document.getElementById('allergyId').value;
     publishingType = document.getElementById('publishingTypeId').value;
     itemCategory = document.getElementById('itemCategoryId').value;
+    itemOverView = document.getElementById('blog-content').value
 }
 
 
@@ -145,6 +152,7 @@ document.getElementById('ingredient8Id').addEventListener('input', editFieldValu
 document.getElementById('allergyId').addEventListener('input', editFieldValue)
 document.getElementById('publishingTypeId').addEventListener('input', editFieldValue)
 document.getElementById('itemCategoryId').addEventListener('input', editFieldValue)
+document.getElementById('blog-content').addEventListener('input', editFieldValue)
 
 
 const sendItemToTheBackEnd = () => {
@@ -160,7 +168,8 @@ const sendItemToTheBackEnd = () => {
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/itemCreationOrUpdate`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken.trim()
         },
         body : JSON.stringify(itemJsonData)
     })
@@ -214,11 +223,30 @@ function display(itemList) {
       itemDetailsContainer.className = 'd-flex gap-2 flex-wrap align-items-center';
   
       itemDetailsContainer.setAttribute('data-index', index);
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+
+
+      item.isDisplay===true ? checkbox.checked ='checked' : checkbox.checked='';
+
+   
+      checkbox.addEventListener('change', ()=>{
+
+        if(checkbox.checked){
+          enableItemHomePageDisplayFeature(item.itemId);
+        }
+        else{
+          disenableItemHomePageDisplayFeature(item.itemId)
+        }
+      })
+      
   
       const avatarElement = document.createElement('span');
       avatarElement.className = 'avatar avatar-xl me-1';
       const avatarImage = document.createElement('img');
-      avatarImage.src = '../assets/images/media/media-39.jpg';
+      avatarImage.src = item.itemImgUrl;
+      //'../assets/images/media/media-39.jpg';
       avatarImage.className = 'img-fluid';
       avatarImage.alt = '...';
       avatarElement.appendChild(avatarImage);
@@ -290,7 +318,8 @@ function display(itemList) {
       
    
       itemInfoDiv.appendChild(itemPriceAndSizeDiv);
-  
+
+      itemDetailsContainer.appendChild(checkbox)
       itemDetailsContainer.appendChild(avatarElement);
       itemDetailsContainer.appendChild(itemInfoDiv);
       itemDetailsContainer.appendChild(dropdownDiv);
@@ -317,7 +346,8 @@ function display(itemList) {
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/itemDeletionById?id=${encodeURIComponent(itemId)}`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          "Authorization" : jwtToken.trim()
       },
   })
   .then(response =>{
@@ -423,7 +453,9 @@ document.getElementById('ingredient8Id').value = selectedItem.ingredients[7]
 }
 
 document.getElementById('allergyId').value = selectedItem.allergy
-document.getElementById('itemCategoryId').value = selectedItem.itemCategory } 
+document.getElementById('itemCategoryId').value = selectedItem.itemCategory 
+document.getElementById('blog-content').value = selectedItem.itemOverView
+} 
 
 
 
@@ -454,6 +486,7 @@ function clearFormDetailsAfterResponseFromBackend(){
   document.getElementById('allergyId').value=""
   document.getElementById('publishingTypeId').value=""
   document.getElementById('itemCategoryId').value=""
+  document.getElementById('blog-content').value =""
 
 
 
@@ -468,7 +501,92 @@ function clearFormDetailsAfterResponseFromBackend(){
 
 
 
+function enableItemHomePageDisplayFeature(itemId){
 
+
+
+
+
+  itemId = Number(itemId);
+  console.log("Im the item Id to activate display feature ", itemId);
+  console.log("Token ", jwtToken);
+
+
+ 
+    
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/homePageDisplayEnablement?itemId=${encodeURIComponent(itemId)}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : jwtToken
+    },
+})
+.then(response =>{
+    if(!response.ok){
+        throw new Error('Home Page Display Enablement Failed')
+    }
+    else{
+    return response.json()}
+})
+.then(data=>{
+    console.log(data.data);
+    const message = data.data
+    const timer = 2000;
+    {toast(message, timer)}    
+    fetchPaginatedItemListFromBackend()  
+  })
+.catch(error=>{
+    console.log("error ", error);
+    const message = "Network Failed"
+    const timer = 3000;
+    {toast(message, timer)}  
+})
+}
+
+
+
+function disenableItemHomePageDisplayFeature(itemId){
+
+  
+  itemId = Number(itemId);
+
+  console.log("Im the item Id to deactivate display feature ", itemId);
+
+
+  console.log("I'm the jwt token inside the fuction ", jwtToken );
+      
+  fetch(`${temisplaceBaseUrl}/api/v1/temisplace/homePageDisplayDisablement?itemId=${encodeURIComponent(itemId)}`, {
+    method: 'POST',
+    // mode: "no-cors",
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': jwtToken.trim()
+    },
+})
+.then(response =>{
+  console.log(response);
+    if(!response.ok){
+        throw new Error('Home Page Display Enablement Failed')
+    }
+    else{
+    return response.json()}
+})
+.then(data=>{
+    console.log(data.data);
+    const message = data.data
+    const timer = 2000;
+    {toast(message, timer)}    
+    fetchPaginatedItemListFromBackend()  
+  })
+.catch(error=>{
+    console.log("error ", error);
+    const message = "Network Failed"
+    const timer = 3000;
+    {toast(message, timer)}  
+
+})
+
+}
 
 
 

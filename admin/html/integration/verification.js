@@ -36,7 +36,7 @@ const confirmOtPFromBackend = ()=>{
     const concatenatedValue = one + two + three + four;
 
     otpConfirmationRequest.token = concatenatedValue;
-    otpConfirmationRequest.emailAddress = localStorage.getItem('email')
+    otpConfirmationRequest.emailAddress = sessionStorage.getItem('email')
 
 
     console.log(otpConfirmationRequest);
@@ -57,6 +57,8 @@ const confirmOtPFromBackend = ()=>{
     })
     .then(data=>{
         console.log("I'm the data ", data.data);
+        const timer = 3000;
+        {toast(data.data, timer)}
         routeToDashBoard(data.data)
     })
       
@@ -73,22 +75,38 @@ document.getElementById('confirmOtpBtnId').addEventListener('click', confirmOtPF
 
 
 const routeToDashBoard =(data)=>{
+    let adminFullName;
 
     if(data[0]=="ADMIN"){
-        localStorage.removeItem('email');
-        localStorage.setItem('adminEmail', otpConfirmationRequest.emailAddress)
-        window.location.href = "tp-dashboard.html";
+        sessionStorage.removeItem('email');
+        sessionStorage.setItem('adminEmail', otpConfirmationRequest.emailAddress)
+        const adminNameParam= new URLSearchParams(window.location.search)
+        const adminName = adminNameParam.get('adminFullName') 
+        alert("I'm the gotten admin name ", adminName)
+
+if(adminName){
+    const decodedAdminName = decodeURIComponent(adminName)
+    alert("Im the decoded adminName ", decodedAdminName);
+    adminFullName = decodedAdminName;
+}
+
+        const stringifiedAdminFullNameToBePassedWithUrl = JSON.stringify(adminFullName)
+        const encodedAdminFullName  = encodeURIComponent(stringifiedAdminFullNameToBePassedWithUrl)
+
+
+        const url =  `tp-dashboard.html?adminFullName=${encodedAdminFullName}`;
+        window.location.href = url;
     };
 
     if(data[0]=="UNIT"){
-        localStorage.removeItem('email');
-        localStorage.setItem('unitEmail', otpConfirmationRequest.emailAddress)
+        sessionStorage.removeItem('email');
+        sessionStorage.setItem('unitEmail', otpConfirmationRequest.emailAddress)
         window.location.href = "u-menu.html";
     };
 
     if(data[0]=="STAFF"){
-        localStorage.removeItem('email');
-        localStorage.setItem('staffEmail', otpConfirmationRequest.emailAddress)
+        sessionStorage.removeItem('email');
+        sessionStorage.setItem('staffEmail', otpConfirmationRequest.emailAddress)
         window.location.href = "u-menu.html";
     };
 

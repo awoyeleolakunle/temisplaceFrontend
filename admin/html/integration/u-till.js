@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     fetcAllItemCategoryName();
     
 })
-
-const unitName =JSON.parse(sessionStorage.getItem('temisplace-unitName'))
+const jwtToken = JSON.parse(sessionStorage.getItem('temisplaceToken'));
+const unitName = sessionStorage.getItem('temisplace-unitName')
 console.log(unitName);
 let listOfItemDetails = [];
 let total;
@@ -208,6 +208,7 @@ function fetchUnitAllAvailableItemUnderItemCategory(unitAvailableItemsRequest){
 
 
 function generateSizesAndPricesItem(sizesAndPrices, itemId, itemTitle) {
+
     const listItem = document.createElement('li');
     listItem.innerHTML = `
         <input type="checkbox" class="check-button" />
@@ -230,6 +231,7 @@ function generateSizesAndPricesItem(sizesAndPrices, itemId, itemTitle) {
                 itemId: itemId,
                 itemSize: sizesAndPrices.size
             };
+            
             addItemDetailsToList(itemDetails);
         } else {
          
@@ -308,7 +310,7 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
                     <ul id="sizeAndPriceList">
                         <!-- Populate this list with the sizes and prices dynamically -->
                     </ul>
-                    <button id="addToCartButton">Add to Cart</button>
+                    <button class="addToCartButton">Add to Cart</button>
                 </div>
             </div>
         `;
@@ -321,8 +323,10 @@ function displayAllAvailableItemsUnderAnItemCategory(listOfItemsUnderItemCategor
 
         const sizeAndPriceList = itemContainer.querySelector('#sizeAndPriceList');
         for (const sizesAndPrices of item.itemPriceAndSize) {
+            if(sizesAndPrices.listOfUnitsAvailable.includes(unitName)){
             const listItem = generateSizesAndPricesItem(sizesAndPrices, item.itemId, item.itemTitle);
             sizeAndPriceList.appendChild(listItem);
+            }
         }
     });
 }
@@ -349,6 +353,10 @@ function openModal( modalId) {
 
     modal.querySelector('.close').addEventListener('click', () => {
         closeModal(modal); 
+    });
+
+    modal.querySelector('.addToCartButton').addEventListener('click', () => {
+       closeModal(modal);
     });
 }
 
@@ -460,6 +468,7 @@ function displayCartDetails() {
 function totalSumOfCartItems(){
    total = listOfItemDetails.map(item=>item.subTotal).reduce((accumulator, currentValue)=>accumulator+currentValue, 0);
    document.getElementById('totalAmountId').innerHTML = "£"+total.toFixed(2);
+   document.getElementById('amountDueId').innerHTML = "£"+total.toFixed(2);
 }
 
 
@@ -503,11 +512,12 @@ function sendOrderToBackend(){
     extractListOfItemDetailsNeeAsAListToSendToBackend();
 
 
-
     const numberOfAllItemQuantityOrdered = orderItemRequestList.reduce((sum, item) => sum + Number(item.quantity), 0);
 
 
     console.log("I'm the total numbers of items purchased", numberOfAllItemQuantityOrdered);
+
+
 
     const itemRequestDetails= {
         orderItemRequestList : orderItemRequestList,
@@ -515,20 +525,28 @@ function sendOrderToBackend(){
         unitName : unitName,
         orderFrom : "INSTORE",
         paymentType : String(paymentType),
-        numberOfAllItemQuantityOrdered :numberOfAllItemQuantityOrdered
+        numberOfAllItemQuantityOrdered :numberOfAllItemQuantityOrdered, 
+
+        firstName : "----------",
+        phoneNumber : "---------",
+        emailAddress :"---------"        
     }
 
 
+    
     fetch(`${temisplaceBaseUrl}/api/v1/temisplace/Orders/makeOrder`, {
-        method : 'POST',
-        headers : {
-            'Content-Type': 'application/json'
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization" : jwtToken
         },
         body: JSON.stringify(itemRequestDetails)
     })
     .then(response=>{
+       
         if(!response.ok){
-          
+
+            console.log(response);
             throw new Error('Failed to make order')
         }
         else{
